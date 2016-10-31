@@ -5,6 +5,11 @@
  */
 package br.newtonpaiva.gc.ui;
 
+import br.newtonpaiva.modelo.Empresa;
+import br.newtonpaiva.util.CpfCnpjUtil;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,6 +18,8 @@ import javax.swing.JOptionPane;
  */
 public class TelaContrato extends javax.swing.JDialog {
 
+    private Empresa empresaSelecionada;
+    
     /**
      * Creates new form TelaContrato
      */
@@ -279,11 +286,6 @@ public class TelaContrato extends javax.swing.JDialog {
                 txtCNPJEmpresaFocusLost(evt);
             }
         });
-        txtCNPJEmpresa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCNPJEmpresaActionPerformed(evt);
-            }
-        });
 
         jLabel12.setText("CNPJ");
 
@@ -412,14 +414,30 @@ public class TelaContrato extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProtocoloActionPerformed
 
-    private void txtCNPJEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCNPJEmpresaActionPerformed
-        // TODO add your handling code here:
-        JOptionPane.showMessageDialog(null, "Teste");
-    }//GEN-LAST:event_txtCNPJEmpresaActionPerformed
-
     private void txtCNPJEmpresaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCNPJEmpresaFocusLost
         // TODO add your handling code here:
-        JOptionPane.showMessageDialog(null, "Focus lost");
+        String cnpj = CpfCnpjUtil.removerFormatacaoCpfCnpj(
+                txtCNPJEmpresa.getText());
+                
+        if(!cnpj.isEmpty()) {
+            try {
+                empresaSelecionada = Empresa.buscarPorCNPJ(cnpj);
+                
+                if(empresaSelecionada == null) {
+                    JOptionPane.showMessageDialog(null, 
+                            "Empresa não encontrada.");
+                    txtCNPJEmpresa.setText("");
+                    lblNomeEmpresa.setText("");
+                    txtCNPJEmpresa.requestFocus();
+                } else {
+                    lblNomeEmpresa.setText(empresaSelecionada.getNome());
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Entrar em contato com Marcel.");
+            }
+            
+        }
     }//GEN-LAST:event_txtCNPJEmpresaFocusLost
 
     /**

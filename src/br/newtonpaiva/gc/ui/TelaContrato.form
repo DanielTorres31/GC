@@ -481,6 +481,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="..."/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPesquisaEmpresaActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblNomeEmpresa">
           <Properties>
@@ -529,6 +532,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Adicionar Anexo"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAdicionarAnexoActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnRemoverAnexo">
           <Properties>

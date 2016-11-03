@@ -9,6 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -16,12 +18,15 @@ import javax.swing.JTextField;
  */
 public class TelaPesquisa extends javax.swing.JDialog {
 
+    private DefaultTableModel tableModel;
+    
     /**
      * Creates new form TelaPesquisa
      */
     public TelaPesquisa(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        inicializarTabela();
     }
 
     /**
@@ -51,6 +56,11 @@ public class TelaPesquisa extends javax.swing.JDialog {
         jLabel2.setText("Filtro");
 
         btnLimpar.setText("Limpar");
+        btnLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparActionPerformed(evt);
+            }
+        });
 
         btnConsultar.setText("Consultar");
 
@@ -113,6 +123,13 @@ public class TelaPesquisa extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+        // TODO add your handling code here:
+        txtFiltro.setText("");
+        cbxTipoFiltro.setSelectedIndex(0);
+        tableModel.setRowCount(0);
+    }//GEN-LAST:event_btnLimparActionPerformed
 
     /**
      * @param args the command line arguments
@@ -181,5 +198,14 @@ public class TelaPesquisa extends javax.swing.JDialog {
 
     public JTextField getTxtFiltro() {
         return txtFiltro;
+    }
+
+    private void inicializarTabela() {
+        tableModel = new DefaultTableModel();
+        tblResultadoPesquisa.setModel(tableModel);
+    }
+    
+    public DefaultTableModel getTableModel() {
+        return tableModel;
     }
 }

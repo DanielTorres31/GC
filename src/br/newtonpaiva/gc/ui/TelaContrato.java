@@ -5,12 +5,19 @@
  */
 package br.newtonpaiva.gc.ui;
 
+import br.newtonpaiva.gc.ui.utils.TelaPesquisa;
+import br.newtonpaiva.modelo.Contrato;
 import br.newtonpaiva.modelo.Empresa;
 import br.newtonpaiva.util.CpfCnpjUtil;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,6 +26,7 @@ import javax.swing.JOptionPane;
 public class TelaContrato extends javax.swing.JDialog {
 
     private Empresa empresaSelecionada;
+    private DefaultTableModel tableModel;
     
     /**
      * Creates new form TelaContrato
@@ -26,6 +34,7 @@ public class TelaContrato extends javax.swing.JDialog {
     public TelaContrato(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        inicializarTabela();
     }
 
     /**
@@ -290,6 +299,11 @@ public class TelaContrato extends javax.swing.JDialog {
         jLabel12.setText("CNPJ");
 
         btnPesquisaEmpresa.setText("...");
+        btnPesquisaEmpresa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisaEmpresaActionPerformed(evt);
+            }
+        });
 
         lblNomeEmpresa.setText("Newton Paiva");
 
@@ -345,6 +359,11 @@ public class TelaContrato extends javax.swing.JDialog {
         jPanel4.add(btnSalvar);
 
         btnAdicionarAnexo.setText("Adicionar Anexo");
+        btnAdicionarAnexo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarAnexoActionPerformed(evt);
+            }
+        });
         jPanel4.add(btnAdicionarAnexo);
 
         btnRemoverAnexo.setText("Remover Anexo");
@@ -440,6 +459,49 @@ public class TelaContrato extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_txtCNPJEmpresaFocusLost
 
+    private void btnAdicionarAnexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarAnexoActionPerformed
+        // TODO add your handling code here:
+        JFileChooser tela = new JFileChooser();
+        int retorno = tela.showOpenDialog(this);
+        
+        if(retorno == JFileChooser.APPROVE_OPTION) {
+            File arquivo = tela.getSelectedFile();
+            //JOptionPane.showMessageDialog(null, arquivo.getAbsolutePath());
+            Contrato c = new Contrato();
+            c.setId(1);            
+            try {
+                c.anexarDocumento(arquivo.getAbsolutePath());
+                tableModel.addRow(
+                        new String[]{"", arquivo.getAbsolutePath()});
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Arquivo não encontrado.");
+            } catch (SQLException ex) {
+                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Entrar em contato com Marcel.");
+            }
+        }
+//        else {
+//            JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado.");
+//        }
+    }//GEN-LAST:event_btnAdicionarAnexoActionPerformed
+
+    private void btnPesquisaEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisaEmpresaActionPerformed
+        // TODO add your handling code here:
+        TelaPesquisa tela = new TelaPesquisa(
+                (JFrame) this.getParent(), true);
+        
+        tela.getCbxTipoFiltro().removeAllItems();
+        tela.getCbxTipoFiltro().addItem("Razão Social");
+        tela.getCbxTipoFiltro().addItem("CNPJ");
+        
+        tela.getTableModel().addColumn("ID");
+        tela.getTableModel().addColumn("CNPJ");
+        tela.getTableModel().addColumn("Razão Social");        
+        
+        tela.setVisible(true);
+    }//GEN-LAST:event_btnPesquisaEmpresaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -528,4 +590,14 @@ public class TelaContrato extends javax.swing.JDialog {
     private javax.swing.JTextField txtProtocolo;
     private javax.swing.JTextField txtRA;
     // End of variables declaration//GEN-END:variables
+
+    private void inicializarTabela() {
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("ID");
+        tableModel.addColumn("Nome do Arquivo");
+        
+        //tableModel.addRow(new String[] {"1", "C:/teste.txt"});
+        
+        jTable1.setModel(tableModel);
+    }
 }

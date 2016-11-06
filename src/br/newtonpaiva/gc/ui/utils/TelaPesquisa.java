@@ -75,6 +75,7 @@ public class TelaPesquisa extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblResultadoPesquisa.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblResultadoPesquisa);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -201,7 +202,13 @@ public class TelaPesquisa extends javax.swing.JDialog {
     }
 
     private void inicializarTabela() {
-        tableModel = new DefaultTableModel();
+        tableModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
         tblResultadoPesquisa.setModel(tableModel);
     }
     

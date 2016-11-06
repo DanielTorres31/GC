@@ -10,17 +10,20 @@ import br.newtonpaiva.modelo.Contrato;
 import br.newtonpaiva.modelo.Empresa;
 import br.newtonpaiva.util.CpfCnpjUtil;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -84,8 +87,6 @@ public class TelaContrato extends javax.swing.JDialog {
         jLabel12 = new javax.swing.JLabel();
         btnPesquisaEmpresa = new javax.swing.JButton();
         lblNomeEmpresa = new javax.swing.JLabel();
-        cbxConvenio = new javax.swing.JComboBox<>();
-        jLabel13 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         btnLimpar = new javax.swing.JButton();
         btnConsultar = new javax.swing.JButton();
@@ -93,19 +94,13 @@ public class TelaContrato extends javax.swing.JDialog {
         btnAdicionarAnexo = new javax.swing.JButton();
         btnRemoverAnexo = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblAnexo = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do contrato"));
 
         jLabel1.setText("Protocolo");
-
-        txtProtocolo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtProtocoloActionPerformed(evt);
-            }
-        });
 
         jLabel2.setText("Data Entrada");
 
@@ -136,11 +131,6 @@ public class TelaContrato extends javax.swing.JDialog {
         jLabel10.setText("Aux. Transporte");
 
         txtBolsa.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance())));
-        txtBolsa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBolsaActionPerformed(evt);
-            }
-        });
 
         txtAuxTransporte.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance())));
 
@@ -262,7 +252,7 @@ public class TelaContrato extends javax.swing.JDialog {
 
         btnPesquisaAluno.setText("...");
 
-        lblNomeAluno.setText("Tarley Lana");
+        lblNomeAluno.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -271,14 +261,16 @@ public class TelaContrato extends javax.swing.JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(txtRA, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnPesquisaAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblNomeAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblNomeAluno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,11 +301,7 @@ public class TelaContrato extends javax.swing.JDialog {
             }
         });
 
-        lblNomeEmpresa.setText("Newton Paiva");
-
-        cbxConvenio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Não possui convenio" }));
-
-        jLabel13.setText("Convenio");
+        lblNomeEmpresa.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -327,30 +315,22 @@ public class TelaContrato extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnPesquisaEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblNomeEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel12))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(lblNomeEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(cbxConvenio, 0, 181, Short.MAX_VALUE))
+                        .addComponent(jLabel12)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(jLabel13))
+                .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtCNPJEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnPesquisaEmpresa)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblNomeEmpresa)
-                        .addComponent(cbxConvenio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(lblNomeEmpresa)))
         );
 
         btnLimpar.setText("Limpar");
@@ -378,12 +358,9 @@ public class TelaContrato extends javax.swing.JDialog {
         btnRemoverAnexo.setText("Remover Anexo");
         jPanel4.add(btnRemoverAnexo);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblAnexo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", "Contrato Versão 1.pdf"},
-                {"2", "Imagem.jpg"},
-                {"3", "Cont_v2.pdf"},
-                {"4", "Teste errado.doc"}
+
             },
             new String [] {
                 "ID", "Nome do Arquivo"
@@ -404,8 +381,8 @@ public class TelaContrato extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(jTable1);
+        tblAnexo.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(tblAnexo);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -414,7 +391,7 @@ public class TelaContrato extends javax.swing.JDialog {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
             .addComponent(jScrollPane2)
         );
         layout.setVerticalGroup(
@@ -433,14 +410,6 @@ public class TelaContrato extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txtBolsaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBolsaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBolsaActionPerformed
-
-    private void txtProtocoloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProtocoloActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtProtocoloActionPerformed
 
     private void txtCNPJEmpresaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCNPJEmpresaFocusLost
         // TODO add your handling code here:
@@ -490,66 +459,125 @@ public class TelaContrato extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "Entrar em contato com Marcel.");
             }
         }
-//        else {
-//            JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado.");
-//        }
     }//GEN-LAST:event_btnAdicionarAnexoActionPerformed
 
     private void btnPesquisaEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisaEmpresaActionPerformed
         // TODO add your handling code here:
-        TelaPesquisa tela = new TelaPesquisa(
-                (JFrame) this.getParent(), true);
+        TelaPesquisa tela = new TelaPesquisa((JFrame) this.getParent(), true);
 
+        //<editor-fold defaultstate="collapsed" desc="Customizando a tela para consulta de empresa">
         tela.getCbxTipoFiltro().removeAllItems();
         tela.getCbxTipoFiltro().addItem("Razão Social");
         tela.getCbxTipoFiltro().addItem("CNPJ");
-
+        
         tela.getTableModel().addColumn("ID");
         tela.getTableModel().addColumn("CNPJ");
         tela.getTableModel().addColumn("Razão Social");
+//</editor-fold>
 
-        tela.getBtnConsultar().addActionListener(
-                new AcaoPesquisaEmpresa(tela.getTxtFiltro(), tela.getCbxTipoFiltro()));
-
-        tela.setVisible(true);
-
-
-    }//GEN-LAST:event_btnPesquisaEmpresaActionPerformed
-
-    private class AcaoPesquisaEmpresa implements ActionListener {
-
-        private JTextField filtro;
-        private JComboBox<String> tipoFiltro;
-
-        public AcaoPesquisaEmpresa(JTextField filtro, JComboBox<String> tipoFiltro) {
-            this.filtro = filtro;
-            this.tipoFiltro = tipoFiltro;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
+        //<editor-fold defaultstate="collapsed" desc="Evento de consulta empresa">
+        tela.getBtnConsultar().addActionListener((ActionEvent evento) -> {
             try {
-                if (tipoFiltro.getSelectedIndex() == 1) {
-
-                    String cnpj = filtro.getText();
-                    Empresa.buscarPorCNPJ(cnpj);
-                } else if (tipoFiltro.getSelectedIndex() == 2) {
-                    String nome = filtro.getText();
-                    Empresa.buscarPorNome(nome);
+                //TelaPesquisa tela1 = (TelaPesquisa) ((JButton) e.getSource()).getParent();
+                
+                switch(tela.getCbxTipoFiltro().getSelectedIndex()) {
+                    case 0:
+                        // Obtem o valor informado na tela
+                        String razaoSocial = tela.getTxtFiltro().getText();
+                        
+                        // Consulta a empresa pelo nome
+                        List<Empresa> lista = Empresa.buscarPorNome(razaoSocial);
+                        
+                        // Limpa a tabela
+                        tela.getTableModel().setRowCount(0);
+                        
+                        if(lista.isEmpty()) {
+                            JOptionPane.showMessageDialog(this, "Empresa não encontrada.");
+                            tela.getTxtFiltro().requestFocus();
+                        } else {
+                            lista.forEach(emp -> {
+                                Object[] row = {emp.getId(), emp.getCnpjFormatado(), emp.getNome()};
+                                tela.getTableModel().addRow(row);
+                            });
+                        }
+                        break;
+                    case 1:
+                        // Obtem o valor informado na tela
+                        String cnpj = tela.getTxtFiltro().getText();
+                        
+                        // Consulta a empresa pelo CNPJ
+                        Empresa emp = Empresa.buscarPorCNPJ(cnpj);
+                        
+                        // Limpa a tabela
+                        tela.getTableModel().setRowCount(0);
+                        
+                        if(emp == null) {
+                            JOptionPane.showMessageDialog(this, "Empresa não encontrada.");
+                            tela.getTxtFiltro().requestFocus();
+                        } else {
+                            Object[] row = {emp.getId(), emp.getCnpjFormatado(), emp.getNome()};
+                            tela.getTableModel().addRow(row);
+                        }
+                        break;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Erro ao consultar.");
             }
-        }
-    }
+        });
+//</editor-fold>
+                        
+        //<editor-fold defaultstate="collapsed" desc="Evento de selecionar a Empresa">
+        /*
+         * Captura o evento de duplo clique na tabela para a seleção da empresa. 
+         */  
+        tela.getTblResultadoPesquisa().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                
+                // Verifica se foi um duplo clique e se alguma linha foi selecionada
+                if(e.getClickCount() == 2 &&
+                        tela.getTblResultadoPesquisa().getSelectedRowCount() > 0) {
+                    
+                    try {
+                        // Pega a linha selecionada
+                        int rowSelected = tela.getTblResultadoPesquisa().getSelectedRow();
+                        
+                        // Recupera o ID da empresa
+                        Object id = tela.getTableModel().getValueAt(rowSelected, 0);
+                        
+                        // Recupera os demais dados da empresa
+                        empresaSelecionada = Empresa.buscarPorId((int) id);
+                        
+                        // Mostra os dados da empresa na tela principal
+                        txtCNPJEmpresa.setText(empresaSelecionada.getCnpjFormatado());
+                        lblNomeEmpresa.setText(empresaSelecionada.getNome());
+                        
+                        // Fecha a tela
+                        tela.setVisible(false);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                        JOptionPane.showMessageDialog(TelaContrato .this, "Falha ao selecionar a empresa.");
+                    }
+                }
+            }
+        });
+//</editor-fold>
+        
+        tela.setVisible(true);
+    }//GEN-LAST:event_btnPesquisaEmpresaActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
-        cbxConvenio.setEnabled(false);
-        cbxSituacao.setVisible(false);
-
-        //jPanel2.set'Enabled(false);
-        btnAdicionarAnexo.setText("Outro nome");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar dataEntrada = Calendar.getInstance();
+        try {
+            dataEntrada.setTime(format.parse(txtDataEntrada.getText()));
+        } catch(ParseException e) {
+            JOptionPane.showMessageDialog(this, "Data de entrada inválida.");
+            return;
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
@@ -602,14 +630,12 @@ public class TelaContrato extends javax.swing.JDialog {
     private javax.swing.JButton btnPesquisaEmpresa;
     private javax.swing.JButton btnRemoverAnexo;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JComboBox<String> cbxConvenio;
     private javax.swing.JComboBox<String> cbxSituacao;
     private javax.swing.JComboBox<String> cbxTipoContrato;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -625,10 +651,10 @@ public class TelaContrato extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel lblNomeAluno;
     private javax.swing.JLabel lblNomeEmpresa;
+    private javax.swing.JTable tblAnexo;
     private javax.swing.JFormattedTextField txtAuxTransporte;
     private javax.swing.JFormattedTextField txtBolsa;
     private javax.swing.JSpinner txtCHDiaria;
@@ -642,12 +668,18 @@ public class TelaContrato extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private void inicializarTabela() {
-        tableModel = new DefaultTableModel();
+        tableModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
         tableModel.addColumn("ID");
         tableModel.addColumn("Nome do Arquivo");
 
         //tableModel.addRow(new String[] {"1", "C:/teste.txt"});
         tableModel.setRowCount(0);
-        jTable1.setModel(tableModel);
+        tblAnexo.setModel(tableModel);
     }
 }

@@ -9,14 +9,18 @@ import br.newtonpaiva.gc.ui.utils.TelaPesquisa;
 import br.newtonpaiva.modelo.Contrato;
 import br.newtonpaiva.modelo.Empresa;
 import br.newtonpaiva.util.CpfCnpjUtil;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,7 +31,7 @@ public class TelaContrato extends javax.swing.JDialog {
 
     private Empresa empresaSelecionada;
     private DefaultTableModel tableModel;
-    
+
     /**
      * Creates new form TelaContrato
      */
@@ -356,6 +360,11 @@ public class TelaContrato extends javax.swing.JDialog {
         jPanel4.add(btnConsultar);
 
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
         jPanel4.add(btnSalvar);
 
         btnAdicionarAnexo.setText("Adicionar Anexo");
@@ -437,13 +446,13 @@ public class TelaContrato extends javax.swing.JDialog {
         // TODO add your handling code here:
         String cnpj = CpfCnpjUtil.removerFormatacaoCpfCnpj(
                 txtCNPJEmpresa.getText());
-                
-        if(!cnpj.isEmpty()) {
+
+        if (!cnpj.isEmpty()) {
             try {
                 empresaSelecionada = Empresa.buscarPorCNPJ(cnpj);
-                
-                if(empresaSelecionada == null) {
-                    JOptionPane.showMessageDialog(null, 
+
+                if (empresaSelecionada == null) {
+                    JOptionPane.showMessageDialog(null,
                             "Empresa não encontrada.");
                     txtCNPJEmpresa.setText("");
                     lblNomeEmpresa.setText("");
@@ -455,7 +464,7 @@ public class TelaContrato extends javax.swing.JDialog {
                 Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, "Entrar em contato com Marcel.");
             }
-            
+
         }
     }//GEN-LAST:event_txtCNPJEmpresaFocusLost
 
@@ -463,12 +472,12 @@ public class TelaContrato extends javax.swing.JDialog {
         // TODO add your handling code here:
         JFileChooser tela = new JFileChooser();
         int retorno = tela.showOpenDialog(this);
-        
-        if(retorno == JFileChooser.APPROVE_OPTION) {
+
+        if (retorno == JFileChooser.APPROVE_OPTION) {
             File arquivo = tela.getSelectedFile();
             //JOptionPane.showMessageDialog(null, arquivo.getAbsolutePath());
             Contrato c = new Contrato();
-            c.setId(1);            
+            c.setId(1);
             try {
                 c.anexarDocumento(arquivo.getAbsolutePath());
                 tableModel.addRow(
@@ -490,17 +499,58 @@ public class TelaContrato extends javax.swing.JDialog {
         // TODO add your handling code here:
         TelaPesquisa tela = new TelaPesquisa(
                 (JFrame) this.getParent(), true);
-        
+
         tela.getCbxTipoFiltro().removeAllItems();
         tela.getCbxTipoFiltro().addItem("Razão Social");
         tela.getCbxTipoFiltro().addItem("CNPJ");
-        
+
         tela.getTableModel().addColumn("ID");
         tela.getTableModel().addColumn("CNPJ");
-        tela.getTableModel().addColumn("Razão Social");        
-        
+        tela.getTableModel().addColumn("Razão Social");
+
+        tela.getBtnConsultar().addActionListener(
+                new AcaoPesquisaEmpresa(tela.getTxtFiltro(), tela.getCbxTipoFiltro()));
+
         tela.setVisible(true);
+
+
     }//GEN-LAST:event_btnPesquisaEmpresaActionPerformed
+
+    private class AcaoPesquisaEmpresa implements ActionListener {
+
+        private JTextField filtro;
+        private JComboBox<String> tipoFiltro;
+
+        public AcaoPesquisaEmpresa(JTextField filtro, JComboBox<String> tipoFiltro) {
+            this.filtro = filtro;
+            this.tipoFiltro = tipoFiltro;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                if (tipoFiltro.getSelectedIndex() == 1) {
+
+                    String cnpj = filtro.getText();
+                    Empresa.buscarPorCNPJ(cnpj);
+                } else if (tipoFiltro.getSelectedIndex() == 2) {
+                    String nome = filtro.getText();
+                    Empresa.buscarPorNome(nome);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        cbxConvenio.setEnabled(false);
+        cbxSituacao.setVisible(false);
+
+        //jPanel2.set'Enabled(false);
+        btnAdicionarAnexo.setText("Outro nome");
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -595,9 +645,9 @@ public class TelaContrato extends javax.swing.JDialog {
         tableModel = new DefaultTableModel();
         tableModel.addColumn("ID");
         tableModel.addColumn("Nome do Arquivo");
-        
+
         //tableModel.addRow(new String[] {"1", "C:/teste.txt"});
-        
+        tableModel.setRowCount(0);
         jTable1.setModel(tableModel);
     }
 }

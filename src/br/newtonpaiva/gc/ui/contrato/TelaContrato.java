@@ -5,10 +5,10 @@
  */
 package br.newtonpaiva.gc.ui.contrato;
 
-import br.newtonpaiva.gc.ui.empresa.TelaEmpresa;
 import br.newtonpaiva.gc.ui.utils.TelaPesquisa;
 import br.newtonpaiva.modelo.*;
 import br.newtonpaiva.modelo.excessoes.ContratoInvalidoException;
+import br.newtonpaiva.modelo.excessoes.TermoAditivoInvalidoException;
 import br.newtonpaiva.util.CpfCnpjUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +46,12 @@ public class TelaContrato extends javax.swing.JDialog {
     private Empresa empresaSelecionada;
     private Aluno alunoSelecionado;
     private DefaultTableModel tableModel;
+    private DefaultTableModel tableModelAnexoTermo;
+    private DefaultTableModel tableModelTermo;
+    private DefaultTableModel tableModelHistorico;
+    private TermoAditivo termo;
+    private List<TermoAditivo> termos;
+    private List<Documento> documentos;
 
     public TelaContrato(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -58,6 +64,8 @@ public class TelaContrato extends javax.swing.JDialog {
         inicializarTabela();
         this.setResizable(false);
         contrato = new Contrato();
+        tabPanelGeral.setSelectedIndex(0);
+
     }
 
     private void inicializarTabela() {
@@ -74,6 +82,50 @@ public class TelaContrato extends javax.swing.JDialog {
         tblResultadoAnexo.setModel(tableModel);
     }
 
+    private void inicializarTabelaTermo() {
+
+        tableModelTermo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tableModelTermo.addColumn("ID");
+        tableModelTermo.addColumn("Data Termo");
+        tableModelTermo.addColumn("Data Início");
+        tableModelTermo.addColumn("Data Término");
+
+        tblResultadoAditivo.setModel(tableModelTermo);
+    }
+
+    private void inicializarTabelaAnexoTermo() {
+
+        tableModelAnexoTermo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tableModelAnexoTermo.addColumn("ID");
+        tableModelAnexoTermo.addColumn("Nome do Arquivo");
+
+        tblResultadoAnexoTermo.setModel(tableModelAnexoTermo);
+
+    }
+
+    private void inicializarTabelaHistorico() {
+        tableModelHistorico = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tableModelHistorico.addColumn("Data");
+        tableModelHistorico.addColumn("Situação");
+        tableModelHistorico.addColumn("Observação");
+        tblResultadoHistorico.setModel(tableModelHistorico);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -83,6 +135,8 @@ public class TelaContrato extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        tabPanelGeral = new javax.swing.JTabbedPane();
+        jPanel6 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         lblRA = new javax.swing.JLabel();
         txtRA = new javax.swing.JTextField();
@@ -123,8 +177,6 @@ public class TelaContrato extends javax.swing.JDialog {
         btnLimparContrato = new javax.swing.JButton();
         btnConsultarContrato = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
-        btnHistorico = new javax.swing.JButton();
-        btnTermoAditivo = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         btnReativar = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -132,9 +184,44 @@ public class TelaContrato extends javax.swing.JDialog {
         tblResultadoAnexo = new javax.swing.JTable();
         btnBaixarAnexo = new javax.swing.JButton();
         btnAddAnexo = new javax.swing.JButton();
+        jPanel7 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblResultadoHistorico = new javax.swing.JTable();
+        jPanel8 = new javax.swing.JPanel();
+        tabPanel = new javax.swing.JTabbedPane();
+        tblLista = new javax.swing.JPanel();
+        JScroll1 = new javax.swing.JScrollPane();
+        tblResultadoAditivo = new javax.swing.JTable();
+        jPanel10 = new javax.swing.JPanel();
+        btnExcluirTermo = new javax.swing.JButton();
+        btnSelecionarTermo = new javax.swing.JButton();
+        tblDados = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        txtDataTermo = new javax.swing.JFormattedTextField();
+        txtDataInicioTermo = new javax.swing.JFormattedTextField();
+        jLabel10 = new javax.swing.JLabel();
+        txtDataTerminoTermo = new javax.swing.JFormattedTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtObservacaoTermo = new javax.swing.JTextArea();
+        jPanel9 = new javax.swing.JPanel();
+        btnLimparTermo = new javax.swing.JButton();
+        btnSalvarTermo = new javax.swing.JButton();
+        jPanel11 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tblResultadoAnexoTermo = new javax.swing.JTable();
+        btnAddAnexoTermo = new javax.swing.JButton();
+        btnBaixarAnexoTermo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Contrato");
+
+        tabPanelGeral.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                tabPanelGeralStateChanged(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do Aluno"));
 
@@ -224,7 +311,7 @@ public class TelaContrato extends javax.swing.JDialog {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblCNPJ)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -294,6 +381,12 @@ public class TelaContrato extends javax.swing.JDialog {
         lblAuxTranporte.setText("Aux. Transporte");
 
         txtValorBolsa.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
+        txtValorBolsa.setText("0,00");
+        txtValorBolsa.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtValorBolsaFocusLost(evt);
+            }
+        });
         txtValorBolsa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtValorBolsaActionPerformed(evt);
@@ -301,6 +394,12 @@ public class TelaContrato extends javax.swing.JDialog {
         });
 
         txtAuxTransporte.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
+        txtAuxTransporte.setText("0,00");
+        txtAuxTransporte.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAuxTransporteFocusLost(evt);
+            }
+        });
         txtAuxTransporte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtAuxTransporteActionPerformed(evt);
@@ -454,22 +553,6 @@ public class TelaContrato extends javax.swing.JDialog {
             }
         });
 
-        btnHistorico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/history.png"))); // NOI18N
-        btnHistorico.setText("Histórico");
-        btnHistorico.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHistoricoActionPerformed(evt);
-            }
-        });
-
-        btnTermoAditivo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/termo_aditivo.png"))); // NOI18N
-        btnTermoAditivo.setText("Termo Aditivo");
-        btnTermoAditivo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTermoAditivoActionPerformed(evt);
-            }
-        });
-
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/red_flag.png"))); // NOI18N
         btnCancelar.setText("Rescindir");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -497,15 +580,11 @@ public class TelaContrato extends javax.swing.JDialog {
                 .addComponent(btnConsultarContrato)
                 .addGap(5, 5, 5)
                 .addComponent(btnSalvar)
-                .addGap(32, 32, 32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCancelar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnReativar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnHistorico)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnTermoAditivo)
-                .addGap(43, 43, 43))
+                .addGap(20, 20, 20))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -517,10 +596,7 @@ public class TelaContrato extends javax.swing.JDialog {
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnSalvar)
                         .addComponent(btnCancelar)
-                        .addComponent(btnReativar))
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnTermoAditivo)
-                        .addComponent(btnHistorico)))
+                        .addComponent(btnReativar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -582,19 +658,422 @@ public class TelaContrato extends javax.swing.JDialog {
                         .addGap(5, 5, 5)
                         .addComponent(btnBaixarAnexo))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 952, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAddAnexo)
-                    .addComponent(btnBaixarAnexo))
+                    .addComponent(btnBaixarAnexo)))
+        );
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(59, Short.MAX_VALUE))
+        );
+
+        jPanel4.getAccessibleContext().setAccessibleDescription("");
+
+        tabPanelGeral.addTab("Dados do Contrato", jPanel6);
+
+        tblResultadoHistorico.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"", "Contrato Versão1.pdf"},
+                {"", "Imagem.jpeg"},
+                {null, "Contv2.pdf"},
+                {null, "TesteErrado.doc"}
+            },
+            new String [] {
+                "ID", "Nome do Arquivo"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(tblResultadoHistorico);
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(72, Short.MAX_VALUE))
+        );
+
+        tabPanelGeral.addTab("Histórico do Contrato", jPanel7);
+
+        tblResultadoAditivo.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"", "Contrato Versão1.pdf"},
+                {"", "Imagem.jpeg"},
+                {null, "Contv2.pdf"},
+                {null, "TesteErrado.doc"}
+            },
+            new String [] {
+                "ID", "Nome do Arquivo"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        JScroll1.setViewportView(tblResultadoAditivo);
+
+        btnExcluirTermo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/del.png"))); // NOI18N
+        btnExcluirTermo.setText("Excluir");
+        btnExcluirTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirTermoActionPerformed(evt);
+            }
+        });
+
+        btnSelecionarTermo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ok-mini.png"))); // NOI18N
+        btnSelecionarTermo.setText("Selecionar");
+        btnSelecionarTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelecionarTermoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnExcluirTermo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSelecionarTermo)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnExcluirTermo)
+                    .addComponent(btnSelecionarTermo))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout tblListaLayout = new javax.swing.GroupLayout(tblLista);
+        tblLista.setLayout(tblListaLayout);
+        tblListaLayout.setHorizontalGroup(
+            tblListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tblListaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tblListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JScroll1, javax.swing.GroupLayout.DEFAULT_SIZE, 959, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        tblListaLayout.setVerticalGroup(
+            tblListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tblListaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(JScroll1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(117, Short.MAX_VALUE))
+        );
+
+        tabPanel.addTab("Lista de Termos", tblLista);
+
+        jLabel8.setText("Data do Termo");
+
+        txtDataTermo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        txtDataTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDataTermoActionPerformed(evt);
+            }
+        });
+
+        txtDataInicioTermo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        txtDataInicioTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDataInicioTermoActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("Data de Início");
+
+        txtDataTerminoTermo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        txtDataTerminoTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDataTerminoTermoActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("Data de Término");
+
+        jLabel12.setText("Observação");
+
+        txtObservacaoTermo.setColumns(20);
+        txtObservacaoTermo.setRows(5);
+        jScrollPane4.setViewportView(txtObservacaoTermo);
+
+        btnLimparTermo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/clear.png"))); // NOI18N
+        btnLimparTermo.setText("Limpar");
+        btnLimparTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparTermoActionPerformed(evt);
+            }
+        });
+
+        btnSalvarTermo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/save.png"))); // NOI18N
+        btnSalvarTermo.setText("Salvar");
+        btnSalvarTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarTermoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnLimparTermo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnSalvarTermo)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvarTermo)
+                    .addComponent(btnLimparTermo))
+                .addContainerGap())
+        );
+
+        jPanel11.setBorder(javax.swing.BorderFactory.createTitledBorder("Anexos"));
+        jPanel11.setName(""); // NOI18N
+
+        tblResultadoAnexoTermo.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"", "Contrato Versão1.pdf"},
+                {"", "Imagem.jpeg"},
+                {null, "Contv2.pdf"},
+                {null, "TesteErrado.doc"}
+            },
+            new String [] {
+                "ID", "Nome do Arquivo"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane5.setViewportView(tblResultadoAnexoTermo);
+
+        btnAddAnexoTermo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/attach.png"))); // NOI18N
+        btnAddAnexoTermo.setText("Adicionar Anexo");
+        btnAddAnexoTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddAnexoTermoActionPerformed(evt);
+            }
+        });
+
+        btnBaixarAnexoTermo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/download.png"))); // NOI18N
+        btnBaixarAnexoTermo.setText("Baixar Anexo");
+        btnBaixarAnexoTermo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBaixarAnexoTermoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnAddAnexoTermo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnBaixarAnexoTermo)
+                .addContainerGap())
+            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel11Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane5)
+                    .addContainerGap()))
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap(236, Short.MAX_VALUE)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAddAnexoTermo)
+                    .addComponent(btnBaixarAnexoTermo))
+                .addContainerGap())
+            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel11Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(51, Short.MAX_VALUE)))
+        );
+
+        jScrollPane5.getAccessibleContext().setAccessibleName("");
+
+        javax.swing.GroupLayout tblDadosLayout = new javax.swing.GroupLayout(tblDados);
+        tblDados.setLayout(tblDadosLayout);
+        tblDadosLayout.setHorizontalGroup(
+            tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tblDadosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(tblDadosLayout.createSequentialGroup()
+                        .addGroup(tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(tblDadosLayout.createSequentialGroup()
+                                .addGroup(tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(txtDataTermo, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10)
+                                    .addComponent(txtDataInicioTermo, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel11)
+                                    .addComponent(txtDataTerminoTermo, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel12))
+                        .addGap(0, 651, Short.MAX_VALUE))
+                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        tblDadosLayout.setVerticalGroup(
+            tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tblDadosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tblDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(tblDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDataTerminoTermo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(tblDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDataInicioTermo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(tblDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDataTermo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(51, Short.MAX_VALUE))
+        );
+
+        jPanel11.getAccessibleContext().setAccessibleDescription("");
+
+        tabPanel.addTab("Dados do Termo", tblDados);
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tabPanel)
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tabPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 629, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tabPanelGeral.addTab("Termo Aditivo", jPanel8);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -602,34 +1081,15 @@ public class TelaContrato extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1010, Short.MAX_VALUE)))
+                .addComponent(tabPanelGeral)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(tabPanelGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 646, Short.MAX_VALUE)
         );
 
-        jPanel4.getAccessibleContext().setAccessibleDescription("");
+        tabPanelGeral.getAccessibleContext().setAccessibleName("Histórico do Contrato");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -883,9 +1343,9 @@ public class TelaContrato extends javax.swing.JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            TelaEmpresa telaCadastro = new TelaEmpresa(
-                    (JFrame) this.tela.getParent(), true);
-            telaCadastro.setVisible(true);
+//            TelaEmpresa telaCadastro = new TelaEmpresa(
+//                    (JFrame) this.tela.getParent(), true);
+//            telaCadastro.setVisible(true);
         }
     }
 
@@ -1003,8 +1463,8 @@ public class TelaContrato extends javax.swing.JDialog {
         cbxSituacao.setSelectedIndex(0);
         txtCHDiaria.setValue(0);
         txtCHSemanal.setValue(0);
-        txtValorBolsa.setText("");
-        txtAuxTransporte.setText("");
+        txtValorBolsa.setText("0,00");
+        txtAuxTransporte.setText("0,00");
         txtObservacao.setText("");
         inicializarTabela();
         alunoSelecionado = null;
@@ -1068,6 +1528,8 @@ public class TelaContrato extends javax.swing.JDialog {
 
         tela.getBtnSelecionar().addActionListener(
                 new AcaoSelecionarContrato(tela.getTblResultadoPesquisa(), tela));
+
+        tela.getBtnCadastro().setVisible(false);
 
         tela.setVisible(true);
     }//GEN-LAST:event_btnConsultarContratoActionPerformed
@@ -1310,7 +1772,7 @@ public class TelaContrato extends javax.swing.JDialog {
                             dataEntrada = format1.format(contrato.getDataEntrada().getTime());
                         }
                         txtDataEntrada.setText(dataEntrada);
-                        
+
                         String dataRescisao = "";
                         if (contrato.getDataRescisao() != null && !contrato.getDataRescisao().toString().isEmpty()) {
                             dataRescisao = format1.format(contrato.getDataRescisao().getTime());
@@ -1375,6 +1837,28 @@ public class TelaContrato extends javax.swing.JDialog {
                         } catch (IOException ex) {
                             Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
                         }
+
+                        SimpleDateFormat curFormater = new SimpleDateFormat("dd/MM/yyyy");
+                        String timeStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+                        Calendar dataAt = null;
+                        Date dateObj = null;
+                        if (!timeStamp.isEmpty()) {
+                            try {
+                                dateObj = (Date) curFormater.parse(timeStamp);
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(null, "Data inválida");
+                            }
+                            dataAt = Calendar.getInstance();
+                            dataAt.setTime(dateObj);
+                        }
+                        Calendar dataTermino = contrato.getDataTermino();
+                        if ((contrato.getSituacaoAtual() == SituacaoContrato.ANDAMENTO) && (dataAt != null) && (dataTermino != null) && (dataTermino.before(dataAt))) {
+                            int i = JOptionPane.showConfirmDialog(null, "Este contrato já atingiu a data de término, deseja encerrá-lo?");
+                            if (i == 0) {
+                                alteraSituacao(2, "", false);
+                            }
+                        }
+
                         validaBotoes(cbxSituacao.getSelectedIndex());
                         tela.setVisible(false);
                     }
@@ -1386,78 +1870,6 @@ public class TelaContrato extends javax.swing.JDialog {
             }
         }
     }
-
-    private void btnHistoricoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoricoActionPerformed
-        if ((contrato == null) || (contrato.getId() == null)) {
-            JOptionPane.showMessageDialog(this, "Nenhum contrato selecionado!");
-        } else {
-            TelaHistoricoContrato tela = new TelaHistoricoContrato(
-                    (JFrame) this.getParent(), true);
-            tela.setTitle("Histórico de Situações de Contrato");
-
-            tela.getTableModel().addColumn("Data");
-            tela.getTableModel().addColumn("Situação");
-            tela.getTableModel().addColumn("Observação");
-
-            DefaultTableModel tabela = tela.getTableModel();
-
-            List<ContratoHistorico> x;
-            try {
-                x = ContratoHistorico.buscarPorIdContrato(contrato.getId());
-                if (x != null) {
-                    for (ContratoHistorico i : x) {
-                        String data = "";
-                        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
-                        if (i.getData() != null && !i.getData().toString().isEmpty()) {
-                            data = format1.format(i.getData().getTime());
-                        }
-                        String situacao;
-                        switch (i.getSituacao()) {
-                            case CANCELADO:
-                                situacao = "Cancelado";
-                                break;
-                            case FINALIZADO:
-                                situacao = "Finalizado";
-                                break;
-                            default:
-                                situacao = "Em Andamento";
-                        }
-
-                        tabela.addRow(
-                                new String[]{data, situacao, i.getObservacao()});
-                    }
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            tela.setVisible(true);
-        }
-    }//GEN-LAST:event_btnHistoricoActionPerformed
-
-    private void btnTermoAditivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTermoAditivoActionPerformed
-        if ((contrato == null) || (contrato.getId() == null)) {
-            JOptionPane.showMessageDialog(this, "Nenhum contrato selecionado!");
-        } else {
-            TelaTermoAditivo tela = new TelaTermoAditivo(
-                    (JFrame) this.getParent(), true);
-
-            if (this.cbxSituacao.getSelectedIndex() == 0) {
-                tela.getBtnAddAnexo().setEnabled(true);
-                tela.getBtnExcluir().setEnabled(true);
-                tela.getBtnLimparContrato().setEnabled(true);
-                tela.getBtnSalvar().setEnabled(true);
-            } else {
-                tela.getBtnAddAnexo().setEnabled(false);
-                tela.getBtnExcluir().setEnabled(false);
-                tela.getBtnLimparContrato().setEnabled(false);
-                tela.getBtnSalvar().setEnabled(false);
-            }
-            tela.setContratoSelecionado(contrato);
-            tela.setVisible(true);
-        }
-
-    }//GEN-LAST:event_btnTermoAditivoActionPerformed
 
     private void txtCNPJEmpresaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCNPJEmpresaFocusLost
         String cnpj = CpfCnpjUtil.removerFormatacaoCpfCnpj(txtCNPJEmpresa.getText());
@@ -1524,7 +1936,7 @@ public class TelaContrato extends javax.swing.JDialog {
             dataTermino = Calendar.getInstance();
             dataTermino.setTime(dateObj);
         }
-        
+
         dateStr = txtDataRescisao.getText();
         Calendar dataRescisao = null;
         dateObj = null;
@@ -1638,10 +2050,11 @@ public class TelaContrato extends javax.swing.JDialog {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         String data = JOptionPane.showInputDialog("Informe a data de rescisão: (dd/mm/yyyy)");
-        if (data.isEmpty())
+        if (data.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Informe a data de rescisão!");
-        else 
+        } else {
             alteraSituacao(1, data, true);
+        }
     }//GEN-LAST:event_btnCancelarActionPerformed
     private void alteraSituacao(int tipo, String dataRescisao, Boolean pergunta) {
         if ((contrato == null) || (contrato.getId() == null)) {
@@ -1662,7 +2075,7 @@ public class TelaContrato extends javax.swing.JDialog {
                     default:
                         contrato.setSituacaoAtual(SituacaoContrato.ANDAMENTO);
                 }
-                SimpleDateFormat curFormater = new SimpleDateFormat("dd/MM/yyyy");                
+                SimpleDateFormat curFormater = new SimpleDateFormat("dd/MM/yyyy");
                 Calendar dataResc = null;
                 Date dateObj = null;
                 if (!dataRescisao.isEmpty()) {
@@ -1673,11 +2086,11 @@ public class TelaContrato extends javax.swing.JDialog {
                     }
                     dataResc = Calendar.getInstance();
                     dataResc.setTime(dateObj);
-                }                                       
+                }
                 contrato.setDataRescisao(dataResc);
-                
+
                 ContratoHistorico historico = new ContratoHistorico();
-                historico.setContrato(contrato);                
+                historico.setContrato(contrato);
                 String timeStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
                 Calendar dataAt = null;
                 dateObj = null;
@@ -1693,8 +2106,9 @@ public class TelaContrato extends javax.swing.JDialog {
                 historico.setData(dataAt);
                 historico.setSituacao(contrato.getSituacaoAtual());
                 String obs = "";
-                if (pergunta)
+                if (pergunta) {
                     obs = JOptionPane.showInputDialog("Se desejar, informe as observações da alteração: ");
+                }
                 historico.setObservacao(obs);
 
                 try {
@@ -1715,29 +2129,364 @@ public class TelaContrato extends javax.swing.JDialog {
         }
     }
     private void btnReativarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReativarActionPerformed
-        alteraSituacao(0,"",true);
+        alteraSituacao(0, "", true);
     }//GEN-LAST:event_btnReativarActionPerformed
 
     private void txtDataRescisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataRescisaoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDataRescisaoActionPerformed
 
+    private void txtDataTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataTermoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDataTermoActionPerformed
+
+    private void txtDataInicioTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataInicioTermoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDataInicioTermoActionPerformed
+
+    private void txtDataTerminoTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataTerminoTermoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDataTerminoTermoActionPerformed
+
+    private void btnLimparTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparTermoActionPerformed
+        txtDataInicioTermo.setText("");
+        txtDataTerminoTermo.setText("");
+        txtDataTermo.setText("");
+        txtObservacaoTermo.setText("");
+        inicializarTabelaAnexoTermo();
+        termo = new TermoAditivo();        
+        txtDataTermo.requestFocus();
+    }//GEN-LAST:event_btnLimparTermoActionPerformed
+
+    private void btnSalvarTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarTermoActionPerformed
+        if ((contrato == null) || (contrato.getId() == null)) {
+            JOptionPane.showMessageDialog(this, "Nenhum contrato selecionado!");
+        } else {
+            SimpleDateFormat curFormater = new SimpleDateFormat("dd/MM/yyyy");
+            Date dateObj;
+            String dateStr;
+
+            dateStr = txtDataInicioTermo.getText();
+            Calendar dataInicio = null;
+            if (!dateStr.isEmpty()) {
+                dateObj = null;
+                try {
+                    dateObj = (Date) curFormater.parse(dateStr);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Data de entrada inválida");
+                }
+                dataInicio = Calendar.getInstance();
+                dataInicio.setTime(dateObj);
+            }
+
+            dateStr = txtDataTerminoTermo.getText();
+            Calendar dataTermino = null;
+            if (!dateStr.isEmpty()) {
+                dateObj = null;
+                try {
+                    dateObj = (Date) curFormater.parse(dateStr);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Data de início inválida");
+                }
+                dataTermino = Calendar.getInstance();
+                dataTermino.setTime(dateObj);
+            }
+
+            dateStr = txtDataTermo.getText();
+            Calendar dataTermo = null;
+            if (!dateStr.isEmpty()) {
+                dateObj = null;
+                try {
+                    dateObj = (Date) curFormater.parse(dateStr);
+                } catch (ParseException ex) {
+                    JOptionPane.showMessageDialog(null, "Data de término inválida");
+                }
+                dataTermo = Calendar.getInstance();
+                dataTermo.setTime(dateObj);
+            }
+
+            termo.setContrato(contrato);
+            termo.setData(dataTermo);
+            termo.setDataInicio(dataInicio);
+            termo.setDataTemino(dataTermino);
+            termo.setObservacao(txtObservacaoTermo.getText());
+
+            try {
+                termo.salvar();
+                tableModelTermo.addRow(
+                        new String[]{termo.getId().toString(), txtDataTermo.getText(), txtDataInicioTermo.getText(), txtDataTerminoTermo.getText()});
+                JOptionPane.showMessageDialog(null, "Informações salvas com sucesso!");
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Erro ao salvar contrato no banco de dados");
+                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnSalvarTermoActionPerformed
+
+    private void btnBaixarAnexoTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBaixarAnexoTermoActionPerformed
+        int selecionada = tblResultadoAnexoTermo.getSelectedRow();
+        if (selecionada == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum registro selecionado");
+        } else {
+            JFileChooser tela = new JFileChooser();
+            tela.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int retorno = tela.showSaveDialog(this);
+
+            if (retorno == JFileChooser.APPROVE_OPTION) {
+                File arquivo = tela.getSelectedFile();
+                //JOptionPane.showMessageDialog(null, arquivo.getAbsolutePath() + "\\" + tblResultadoAnexo.getValueAt(selecionada, 1).toString());
+                int id = Integer.parseInt(tblResultadoAnexoTermo.getValueAt(selecionada, 0).toString());
+                try {
+                    Contrato.baixarDocumento(id, arquivo.getAbsolutePath() + "\\" + tblResultadoAnexoTermo.getValueAt(selecionada, 1).toString());
+                } catch (SQLException ex) {
+                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null, "Erro ao baixar o arquivo do banco de dados! Favor entrar em contato com o Administrador do sistema.");
+                } catch (IOException ex) {
+                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null, "Erro localizar o caminho do arquivo!");
+                }
+            }
+        }
+    }//GEN-LAST:event_btnBaixarAnexoTermoActionPerformed
+
+    private void btnExcluirTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirTermoActionPerformed
+
+        int selecionada = tblResultadoAditivo.getSelectedRow();
+        if (selecionada == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum registro selecionado");
+        } else {
+            int i = JOptionPane.showConfirmDialog(null, "Confirma a exclusão do termo aditivo?");
+            if (i == 0) {
+                int id = Integer.parseInt(tblResultadoAditivo.getValueAt(selecionada, 0).toString());
+                try {
+                    TermoAditivo.excluir(id);
+                    tableModelTermo.removeRow(selecionada);
+                    btnLimparTermoActionPerformed(null);
+                } catch (TermoAditivoInvalidoException ex) {
+                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null, "Erro ao excluir termo do banco de dados.");
+                }
+            }
+        }
+    }//GEN-LAST:event_btnExcluirTermoActionPerformed
+
+    public void inicializarTermos() {
+        try {
+            termos = TermoAditivo.buscarPorIdContrato(contrato.getId());
+            if ((termos == null) || (termos.isEmpty())) {
+                tableModelTermo.setRowCount(0);
+            } else {
+                tableModelTermo.setRowCount(0);
+                for (TermoAditivo i : termos) {
+                    SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                    String dataInicio = "";
+                    if (i.getDataInicio() != null && !i.getDataInicio().toString().isEmpty()) {
+                        dataInicio = format1.format(i.getDataInicio().getTime());
+                    }
+
+                    String dataFinal = "";
+                    if (i.getDataTemino() != null && !i.getDataTemino().toString().isEmpty()) {
+                        dataFinal = format1.format(i.getDataTemino().getTime());
+                    }
+
+                    String dataTermo = "";
+                    if (i.getData() != null && !i.getData().toString().isEmpty()) {
+                        dataTermo = format1.format(i.getData().getTime());
+                    }
+
+                    tableModelTermo.addRow(
+                            new String[]{i.getId().toString(), dataTermo, dataInicio, dataFinal});
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Erro localizar termos do contrato!");
+        }
+
+    }
+
+    private void btnSelecionarTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarTermoActionPerformed
+        int selecionada = tblResultadoAditivo.getSelectedRow();
+        if (selecionada == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum registro selecionado");
+        } else {
+            int id = Integer.parseInt(tblResultadoAditivo.getValueAt(selecionada, 0).toString());
+            try {
+                termo = TermoAditivo.buscarPorId(id);
+                if (termo == null) {
+                    JOptionPane.showMessageDialog(null, "Aluno não encontrado, faça a consulta novamente.");
+                } else {
+                    inicializarTermos();
+                    SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                    String dataInicio = "";
+                    if (termo.getDataInicio() != null && !termo.getDataInicio().toString().isEmpty()) {
+                        dataInicio = format1.format(termo.getDataInicio().getTime());
+                    }
+                    txtDataInicioTermo.setText(dataInicio);
+
+                    String dataTermino = "";
+                    if (termo.getDataTemino() != null && !termo.getDataTemino().toString().isEmpty()) {
+                        dataTermino = format1.format(termo.getDataTemino().getTime());
+                    }
+                    txtDataTerminoTermo.setText(dataTermino);
+
+                    String dataTermo = "";
+                    if (termo.getData() != null && !termo.getData().toString().isEmpty()) {
+                        dataTermo = format1.format(termo.getData().getTime());
+                    }
+                    txtDataTermo.setText(dataTermo);
+
+                    txtObservacaoTermo.setText(termo.getObservacao());
+
+                    try {
+                        documentos = TermoAditivo.buscarDocumentos(termo.getId());
+                        if ((documentos == null) || (documentos.isEmpty())) {
+                            tableModelAnexoTermo.setRowCount(0);
+                        } else {
+                            tableModelAnexoTermo.setRowCount(0);
+                            for (Documento i : documentos) {
+                                tableModelAnexoTermo.addRow(
+                                        new String[]{i.getId().toString(), i.getNome()});
+                            }
+                        }
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    tabPanel.setSelectedIndex(1);
+                    txtDataTermo.requestFocus();
+
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnSelecionarTermoActionPerformed
+
+    private void btnAddAnexoTermoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAnexoTermoActionPerformed
+        if ((termo == null) || (termo.getId() == null)) {
+            JOptionPane.showMessageDialog(this, "Nenhum termo selecionado!");
+        } else {
+            JFileChooser tela = new JFileChooser();
+            int retorno = tela.showOpenDialog(this);
+
+            if (retorno == JFileChooser.APPROVE_OPTION) {
+                File arquivo = tela.getSelectedFile();
+                //JOptionPane.showMessageDialog(null, arquivo.getAbsolutePath());
+                try {
+                    int id = termo.anexar(arquivo.getAbsolutePath());
+                    tableModelAnexoTermo.addRow(
+                            new String[]{String.valueOf(id), arquivo.getName()});
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, "Não foi possível encontrar o arquivo!");
+                } catch (SQLException ex) {
+                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, "Erro ao inserir o arquivo no banco de dados!");
+                } catch (IOException ex) {
+                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+    }//GEN-LAST:event_btnAddAnexoTermoActionPerformed
+
+    private void tabPanelGeralStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPanelGeralStateChanged
+        int index = tabPanelGeral.getSelectedIndex();
+        switch (index) {
+            case 1:
+                inicializarTabelaHistorico();
+                if ((contrato == null) || (contrato.getId() == null)) {
+                    JOptionPane.showMessageDialog(this, "Nenhum contrato selecionado!");
+                } else {
+                    List<ContratoHistorico> x;
+                    try {
+                        x = ContratoHistorico.buscarPorIdContrato(contrato.getId());
+                        if (x != null) {
+                            for (ContratoHistorico i : x) {
+                                String data = "";
+                                SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                                if (i.getData() != null && !i.getData().toString().isEmpty()) {
+                                    data = format1.format(i.getData().getTime());
+                                }
+                                String situacao;
+                                switch (i.getSituacao()) {
+                                    case CANCELADO:
+                                        situacao = "Cancelado";
+                                        break;
+                                    case FINALIZADO:
+                                        situacao = "Finalizado";
+                                        break;
+                                    default:
+                                        situacao = "Em Andamento";
+                                }
+
+                                tableModelHistorico.addRow(
+                                        new String[]{data, situacao, i.getObservacao()});
+                            }
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            case 2:
+                inicializarTabelaTermo();
+                inicializarTabelaAnexoTermo();
+                btnLimparTermoActionPerformed(null);
+                tabPanel.setSelectedIndex(0);
+                if ((contrato == null) || (contrato.getId() == null)) {
+                    JOptionPane.showMessageDialog(this, "Nenhum contrato selecionado!");                    
+                } else {
+                    if (this.cbxSituacao.getSelectedIndex() == 0) {
+                        btnAddAnexoTermo.setEnabled(true);
+                        btnExcluirTermo.setEnabled(true);
+                        btnLimparTermo.setEnabled(true);
+                        btnSalvarTermo.setEnabled(true);
+                    } else {
+                        btnAddAnexoTermo.setEnabled(false);
+                        btnExcluirTermo.setEnabled(false);
+                        btnLimparTermo.setEnabled(false);
+                        btnSalvarTermo.setEnabled(false);
+                    }
+                    termo = new TermoAditivo();
+                    inicializarTermos();
+                }
+
+                break;
+        }
+    }//GEN-LAST:event_tabPanelGeralStateChanged
+
+    private void txtValorBolsaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorBolsaFocusLost
+        if (txtValorBolsa.getText().isEmpty())
+            txtValorBolsa.setText("0,00");
+    }//GEN-LAST:event_txtValorBolsaFocusLost
+
+    private void txtAuxTransporteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAuxTransporteFocusLost
+        if (txtAuxTransporte.getText().isEmpty())
+            txtAuxTransporte.setText("0,00");
+    }//GEN-LAST:event_txtAuxTransporteFocusLost
+
     private void validaBotoes(int situacao) {
         switch (situacao) {
             case 0:
-                btnReativar.setEnabled(false);                
+                btnReativar.setEnabled(false);
                 btnCancelar.setEnabled(true);
                 btnSalvar.setEnabled(true);
                 btnAddAnexo.setEnabled(true);
                 break;
             case 1:
-                btnReativar.setEnabled(true);               
+                btnReativar.setEnabled(true);
                 btnCancelar.setEnabled(false);
                 btnSalvar.setEnabled(false);
                 btnAddAnexo.setEnabled(false);
                 break;
             case 2:
-                btnReativar.setEnabled(true);                
+                btnReativar.setEnabled(true);
                 btnCancelar.setEnabled(false);
                 btnSalvar.setEnabled(false);
                 btnAddAnexo.setEnabled(false);
@@ -1791,34 +2540,52 @@ public class TelaContrato extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane JScroll1;
     private javax.swing.JButton btnAddAnexo;
+    private javax.swing.JButton btnAddAnexoTermo;
     private javax.swing.JButton btnBaixarAnexo;
+    private javax.swing.JButton btnBaixarAnexoTermo;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConsultarContrato;
-    private javax.swing.JButton btnHistorico;
+    private javax.swing.JButton btnExcluirTermo;
     private javax.swing.JButton btnLimparContrato;
+    private javax.swing.JButton btnLimparTermo;
     private javax.swing.JButton btnPesquisaAluno;
     private javax.swing.JButton btnPesquisaEmpresa;
     private javax.swing.JButton btnReativar;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JButton btnTermoAditivo;
+    private javax.swing.JButton btnSalvarTermo;
+    private javax.swing.JButton btnSelecionarTermo;
     private javax.swing.JComboBox<String> cbxSituacao;
     private javax.swing.JComboBox<String> cbxTipoContrato;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel lblAuxTranporte;
     private javax.swing.JLabel lblBolsa;
     private javax.swing.JLabel lblCHDiaria;
@@ -1827,16 +2594,27 @@ public class TelaContrato extends javax.swing.JDialog {
     private javax.swing.JLabel lblNomeAluno;
     private javax.swing.JLabel lblNomeEmpresa;
     private javax.swing.JLabel lblRA;
+    private javax.swing.JTabbedPane tabPanel;
+    private javax.swing.JTabbedPane tabPanelGeral;
+    private javax.swing.JPanel tblDados;
+    private javax.swing.JPanel tblLista;
+    private javax.swing.JTable tblResultadoAditivo;
     private javax.swing.JTable tblResultadoAnexo;
+    private javax.swing.JTable tblResultadoAnexoTermo;
+    private javax.swing.JTable tblResultadoHistorico;
     private javax.swing.JFormattedTextField txtAuxTransporte;
     private javax.swing.JSpinner txtCHDiaria;
     private javax.swing.JSpinner txtCHSemanal;
     private javax.swing.JTextField txtCNPJEmpresa;
     private javax.swing.JFormattedTextField txtDataEntrada;
     private javax.swing.JFormattedTextField txtDataInicio;
+    private javax.swing.JFormattedTextField txtDataInicioTermo;
     private javax.swing.JFormattedTextField txtDataRescisao;
     private javax.swing.JFormattedTextField txtDataTermino;
+    private javax.swing.JFormattedTextField txtDataTerminoTermo;
+    private javax.swing.JFormattedTextField txtDataTermo;
     private javax.swing.JTextArea txtObservacao;
+    private javax.swing.JTextArea txtObservacaoTermo;
     private javax.swing.JFormattedTextField txtProtocolo;
     private javax.swing.JTextField txtRA;
     private javax.swing.JFormattedTextField txtValorBolsa;

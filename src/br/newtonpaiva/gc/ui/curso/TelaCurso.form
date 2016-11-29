@@ -78,7 +78,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnCancelar">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Cancelar"/>
+        <Property name="text" type="java.lang.String" value="Limpar"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelar"/>
@@ -95,11 +95,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="imgLogo">
-      <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/logo.png"/>
-        </Property>
-      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -3,21 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.newtonpaiva.gc.ui;
+package br.newtonpaiva.gc.ui.convenio;
 
+import br.newtonpaiva.gc.ui.contrato.TelaContrato;
 import br.newtonpaiva.gc.ui.utils.TelaPesquisa;
-import static br.newtonpaiva.util.Mensagens.*;
-import br.newtowpaiva.modelo.Convenio;
-import br.newtowpaiva.modelo.ConvenioSituacao;
-import br.newtowpaiva.modelo.Curso;
-import br.newtowpaiva.modelo.Empresa;
-import br.newtowpaiva.modelo.execoes.ConvenioInvalidoConvenioSituacaoNuloException;
-import br.newtowpaiva.modelo.execoes.ConvenioInvalidoCursoNuloException;
-import br.newtowpaiva.modelo.execoes.ConvenioInvalidoDataAssinaturaErradoException;
-import br.newtowpaiva.modelo.execoes.ConvenioInvalidoDataAssinaturaNuloException;
-import br.newtowpaiva.modelo.execoes.ConvenioInvalidoDataVencimentoErradoException;
-import br.newtowpaiva.modelo.execoes.ConvenioInvalidoDataVencimentoNuloException;
-import br.newtowpaiva.modelo.execoes.ConvenioInvalidoException;
+import br.newtonpaiva.modelo.Convenio;
+import br.newtonpaiva.modelo.Curso;
+import br.newtonpaiva.modelo.Empresa;
+import br.newtonpaiva.modelo.SituacaoConvenio;
+import br.newtonpaiva.modelo.excecoes.ConvenioInvalidoException;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -36,6 +31,7 @@ import javax.swing.JOptionPane;
  */
 public class TelaConvenios extends javax.swing.JDialog {
 
+    private final ResourceBundle bundle = ResourceBundle.getBundle("MessageBundle");
     private Convenio convenioSelecionado;
     private Empresa empresaSelecionada;
 
@@ -48,17 +44,12 @@ public class TelaConvenios extends javax.swing.JDialog {
     public TelaConvenios(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        /*
-        * posiciona a tela no centro da tela
-         */
+        //posiciona a tela no centro da tela
         setLocationRelativeTo(parent);
-        /*
-        * ao usuário clicar enter ele aciona o botão Salvar
-         */
+        //ao usuário clicar enter ele aciona o botão Salvar
         getRootPane().setDefaultButton(btnSalvar);
-
+        //monta a lista de cursos
         CursosComponente();
-        SituacaoComponente();
     }
 
     /**
@@ -145,13 +136,11 @@ public class TelaConvenios extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        imgLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
-
         cbbCurso.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleciona um..." }));
 
         lblCurso.setText("Curso");
 
-        cbbSituacaoConvenio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleciona um..." }));
+        cbbSituacaoConvenio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleciona um...", "Andamento", "Cancelado", "Finalizado" }));
 
         lblSituacaoConvenio.setText("Situação do convênio");
 
@@ -191,63 +180,68 @@ public class TelaConvenios extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panEmpresa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblCurso)
-                                    .addComponent(cbbCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblInicioAtual)
-                                    .addComponent(edtAssinatura, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblSituacaoConvenio)
-                                    .addComponent(cbbSituacaoConvenio, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblDataEntrada)
-                                    .addComponent(edtVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnSalvar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnLimpar)))))
-                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(imgLogo)
                 .addGap(238, 238, 238))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnSalvar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnLimpar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblInicioAtual)
+                            .addComponent(edtAssinatura, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblDataEntrada)
+                            .addComponent(edtVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCurso)
+                            .addComponent(cbbCurso, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblSituacaoConvenio)
+                            .addComponent(cbbSituacaoConvenio, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(panEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(imgLogo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblCurso)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbbCurso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(lblInicioAtual)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(edtAssinatura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblDataEntrada)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edtVencimento, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblCurso)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbbCurso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(lblSituacaoConvenio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbbSituacaoConvenio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblDataEntrada)
-                        .addGap(8, 8, 8)
-                        .addComponent(edtVencimento)))
-                .addGap(62, 62, 62)
+                        .addComponent(cbbSituacaoConvenio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnLimpar))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         pack();
@@ -260,6 +254,53 @@ public class TelaConvenios extends javax.swing.JDialog {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
+        SimpleDateFormat format = new SimpleDateFormat(bundle.getString("geral.formato.data"));
+        Calendar dataAssintaura = Calendar.getInstance();
+        try {
+            dataAssintaura.setTime(format.parse(edtAssinatura.getText()));
+        } catch (ParseException e) {
+            edtAssinatura.getText();
+            JOptionPane.showMessageDialog(this, bundle.getString("convenio.data.assinatura.invalida") + "\n" + bundle.getString("datas.formatacao"));
+            return;
+        }
+
+        Calendar dataVencimento = Calendar.getInstance();
+        try {
+            dataVencimento.setTime(format.parse(edtVencimento.getText()));
+        } catch (ParseException e) {
+            edtVencimento.getText();
+            JOptionPane.showMessageDialog(this, bundle.getString("convenio.data.vencimento.invalida") + "\n" + bundle.getString("datas.formatacao"));
+            return;
+        }
+
+        //Inicia uma nova classe de curso
+        Curso c = null;
+        try {
+            if (cbbCurso.getSelectedIndex() > 0) {
+                List<Curso> lista = Curso.buscarPorNome((String) cbbCurso.getSelectedItem());
+                if (lista.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, bundle.getString("curso.nao.existe"));
+                    return;
+                } else {
+                    c = lista.get(0);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaConvenios.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
+        }
+
+        Empresa e = null;
+        String cnpj = jspCnpj.getText();
+        if (!cnpj.equals("  .   .   /    -  ")) {
+            try {
+                e = Empresa.buscarPorCNPJ(cnpj);
+            } catch (SQLException ex) {
+                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
+            }
+        }
+
         String Inserir = "N";
         //Se o Convenio edição é nulo
         if (convenioSelecionado == null) {
@@ -268,74 +309,19 @@ public class TelaConvenios extends javax.swing.JDialog {
             Inserir = "S";
         }
 
-        //Inicia uma nova classe de curso
-        Curso c = new Curso();
-        try {
-            if (cbbCurso.getSelectedIndex() > 0) {
-                List<Curso> lista = Curso.buscarPorNome((String) cbbCurso.getSelectedItem());
-                if (lista.size() < 1) {
-                    JOptionPane.showMessageDialog(null, CURSO_NAO_EXISTE);
-                    return;
-                }
-                lista.forEach(Cursos -> {
-                    c.setId(Cursos.getId());
-                });
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+        //Seta a situação do convênio antes de salvar
+        switch (cbbSituacaoConvenio.getSelectedIndex()) {
+            case 1:
+                convenioSelecionado.setSituacao(SituacaoConvenio.ANDAMENTO);
+                break;
+            case 2:
+                convenioSelecionado.setSituacao(SituacaoConvenio.CANCELADO);
+                break;
+            case 3:
+                convenioSelecionado.setSituacao(SituacaoConvenio.FINALIZADO);
+                break;
         }
-
-        //Inicia uma nova classe de curso
-        ConvenioSituacao sc = new ConvenioSituacao();
-        try {
-            if (cbbCurso.getSelectedIndex() > 0) {
-                List<ConvenioSituacao> lista = ConvenioSituacao.buscarPorNome((String) cbbSituacaoConvenio.getSelectedItem());
-                if (lista.size() < 1) {
-                    JOptionPane.showMessageDialog(null, CURSO_NAO_EXISTE);
-                    return;
-                }
-                lista.forEach(SituacoesConvenios -> {
-                    sc.setId(SituacoesConvenios.getId());
-                });
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
-        }
-
-        SimpleDateFormat format = new SimpleDateFormat(GERAL_FORMATO_DATA);
-        Calendar dataVencimento = Calendar.getInstance();
-        try {
-            dataVencimento.setTime(format.parse(edtVencimento.getText()));
-        } catch (ParseException e) {
-            edtVencimento.getText();
-            JOptionPane.showMessageDialog(this, CONVENIO_DATA_VENCIMENTO + "\n" + DATA_FORMATACAO);
-            return;
-        }
-
-        Calendar dataAssintaura = Calendar.getInstance();
-        try {
-            dataAssintaura.setTime(format.parse(edtAssinatura.getText()));
-        } catch (ParseException e) {
-            edtAssinatura.getText();
-            JOptionPane.showMessageDialog(this, CONVENIO_DATA_ASSINATURA + "\n" + DATA_FORMATACAO);
-            return;
-        }
-
-        Empresa e = new Empresa();
-        String cnpj = jspCnpj.getText();
-        if (!cnpj.equals("  .   .   /    -  ")) {
-            try {
-                e.setId(Empresa.buscarPorCnpj(cnpj).getId());
-            } catch (SQLException ex) {
-                Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
-            }
-        }
-
-        //Seta o nome do aluno para salvar (Inserir ou editar)
-        convenioSelecionado.setConvenioSituacao(sc);
+        //Seta as informações na classe
         convenioSelecionado.setCurso(c);
         convenioSelecionado.setDataAssinatura(dataAssintaura);
         convenioSelecionado.setDataVencimento(dataVencimento);
@@ -344,52 +330,21 @@ public class TelaConvenios extends javax.swing.JDialog {
             //Salvar
             convenioSelecionado.salvar();
             //Mensagem de acordo com a açãso (Edição ou inserção)
-            if (Inserir.equals(GERAL_S)) {
-                JOptionPane.showMessageDialog(null, CONVENIO_INSERIR_OK);
-                Limpar();
+            if (Inserir.equals(bundle.getString("geral.s"))) {
+                JOptionPane.showMessageDialog(null, bundle.getString("convenio.inserir.ok"));
                 convenioSelecionado = null;
+                Limpar();
             } else {
-                JOptionPane.showMessageDialog(null, CONVENIO_ALTERAR_OK);
+                JOptionPane.showMessageDialog(null, bundle.getString("convenio.alterar.ok"));
             }
-
-        } catch (ConvenioInvalidoException ex) {
-            cbbCurso.requestFocus();
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, CONVENIOS_DOIS_ANOS);
-        } catch (ConvenioInvalidoDataVencimentoErradoException ex) {
-            edtVencimento.requestFocus();
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, DATA_FORMATACAO);
-        } catch (ConvenioInvalidoDataAssinaturaErradoException ex) {
-            edtAssinatura.requestFocus();
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, DATA_FORMATACAO);
-        } catch (ConvenioInvalidoCursoNuloException ex) {
-            cbbCurso.requestFocus();
+        } catch (ConvenioInvalidoException | SQLException ex) {
             Logger.getLogger(TelaConvenios.class.getName()).log(Level.SEVERE, null, ex);
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ConvenioInvalidoConvenioSituacaoNuloException ex) {
-            cbbSituacaoConvenio.requestFocus();
-            Logger.getLogger(TelaConvenios.class.getName()).log(Level.SEVERE, null, ex);
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ConvenioInvalidoDataAssinaturaNuloException ex) {
-            edtAssinatura.requestFocus();
-            Logger.getLogger(TelaConvenios.class.getName()).log(Level.SEVERE, null, ex);
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ConvenioInvalidoDataVencimentoNuloException ex) {
-            edtVencimento.requestFocus();
-            Logger.getLogger(TelaConvenios.class.getName()).log(Level.SEVERE, null, ex);
-            Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaConvenios.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
-        /*
-        * Limpa os componentes
-         */
+        //Limpa os componentes
         Limpar();
     }//GEN-LAST:event_btnLimparActionPerformed
 
@@ -397,23 +352,23 @@ public class TelaConvenios extends javax.swing.JDialog {
         TelaPesquisa tela = new TelaPesquisa(
                 null, true);
 
-        tela.setTitle(CONTRATOS_PESQUISAR_EMPRESA);
+        tela.setTitle(bundle.getString("contratos.pesquisar.empresa"));
 
-        tela.getCbbTipoFiltro().removeAllItems();
-        tela.getCbbTipoFiltro().addItem(GERAL_RAZAO);
-        tela.getCbbTipoFiltro().addItem(GERAL_CNPJ);
+        tela.getCbxTipoFiltro().removeAllItems();
+        tela.getCbxTipoFiltro().addItem(bundle.getString("geral.razao"));
+        tela.getCbxTipoFiltro().addItem(bundle.getString("geral.cnpj"));
 
-        tela.getTableModel().addColumn(GERAL_ID);
-        tela.getTableModel().addColumn(GERAL_RAZAO);
-        tela.getTableModel().addColumn(GERAL_CNPJ);
+        tela.getTableModel().addColumn(bundle.getString("geral.id"));
+        tela.getTableModel().addColumn(bundle.getString("geral.razao"));
+        tela.getTableModel().addColumn(bundle.getString("geral.cnpj"));
         tela.getBtnConsultar().addActionListener((ActionEvent evento) -> {
             try {
                 //TelaPesquisa tela1 = (TelaPesquisa) ((JButton) e.getSource()).getParent();
 
-                switch (tela.getCbbTipoFiltro().getSelectedIndex()) {
+                switch (tela.getCbxTipoFiltro().getSelectedIndex()) {
                     case 0:
                         // Obtem o valor informado na tela
-                        String razaoSocial = tela.getEdtFiltro().getText();
+                        String razaoSocial = tela.getTxtFiltro().getText();
 
                         // Consulta a empresa pelo nome
                         List<Empresa> lista = Empresa.buscarPorNome(razaoSocial);
@@ -422,8 +377,8 @@ public class TelaConvenios extends javax.swing.JDialog {
                         tela.getTableModel().setRowCount(0);
 
                         if (lista.isEmpty()) {
-                            JOptionPane.showMessageDialog(this, EMPRESA_NAO_ENCONTRADA);
-                            tela.getEdtFiltro().requestFocus();
+                            JOptionPane.showMessageDialog(this, bundle.getString("empresa.nao.encontrada"));
+                            tela.getTxtFiltro().requestFocus();
                         } else {
                             lista.forEach(emp -> {
                                 Object[] row = {emp.getId(), emp.getCnpjFormatado(), emp.getNome()};
@@ -433,17 +388,17 @@ public class TelaConvenios extends javax.swing.JDialog {
                         break;
                     case 1:
                         // Obtem o valor informado na tela
-                        String cnpj = tela.getEdtFiltro().getText();
+                        String cnpj = tela.getTxtFiltro().getText();
 
                         // Consulta a empresa pelo CNPJ
-                        Empresa emp = Empresa.buscarPorCnpj(cnpj);
+                        Empresa emp = Empresa.buscarPorCNPJ(cnpj);
 
                         // Limpa a tabela
                         tela.getTableModel().setRowCount(0);
 
                         if (emp == null) {
-                            JOptionPane.showMessageDialog(this, EMPRESA_NAO_ENCONTRADA);
-                            tela.getEdtFiltro().requestFocus();
+                            JOptionPane.showMessageDialog(this, bundle.getString("empresa.nao.encontrada"));
+                            tela.getTxtFiltro().requestFocus();
                         } else {
                             Object[] row = {emp.getId(), emp.getCnpjFormatado(), emp.getNome()};
                             tela.getTableModel().addRow(row);
@@ -452,7 +407,7 @@ public class TelaConvenios extends javax.swing.JDialog {
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this, ERRO_CONEXAO_BANCO);
+                JOptionPane.showMessageDialog(this, bundle.getString("erro.conexao.banco"));
             }
 
         });
@@ -484,7 +439,7 @@ public class TelaConvenios extends javax.swing.JDialog {
                         tela.setVisible(false);
                     } catch (SQLException ex) {
                         Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
-                        JOptionPane.showMessageDialog(TelaConvenios.this, ERRO_CONEXAO_BANCO);
+                        JOptionPane.showMessageDialog(TelaConvenios.this, bundle.getString("erro.conexao.banco"));
                     }
                 }
             }
@@ -559,32 +514,19 @@ public class TelaConvenios extends javax.swing.JDialog {
     }
 
     private void CursosComponente() {
+        //busca os dados para preencher o curao
         try {
-            List<Curso> lista = Curso.buscarTodos("");
+            List<Curso> lista = Curso.buscarTodos();
             // Limpa o componente
             cbbCurso.removeAllItems();
-            cbbCurso.addItem(GERAL_SELECIONE_UM);
+            cbbCurso.addItem(bundle.getString("geral.seleciona.um"));
             lista.forEach(emp -> {
                 cbbCurso.addItem(emp.getCurso());
             });
         } catch (SQLException ex) {
             Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+            JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
         }
     }
 
-    private void SituacaoComponente() {
-        try {
-            List<ConvenioSituacao> lista = ConvenioSituacao.buscarTodos();
-            // Limpa o componente
-            cbbSituacaoConvenio.removeAllItems();
-            cbbSituacaoConvenio.addItem(GERAL_SELECIONE_UM);
-            lista.forEach(ConvenioSituacao -> {
-                cbbSituacaoConvenio.addItem(ConvenioSituacao.getNome());
-            });
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
-        }
-    }
 }

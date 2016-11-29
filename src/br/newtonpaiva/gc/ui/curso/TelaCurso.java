@@ -3,15 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.newtonpaiva.gc.ui;
+package br.newtonpaiva.gc.ui.curso;
 
-import br.newtowpaiva.modelo.Curso;
-import static br.newtonpaiva.util.Mensagens.*;
-import br.newtowpaiva.modelo.execoes.CursoInvalidoIdNomeException;
-import br.newtowpaiva.modelo.execoes.CursoInvalidoNomeException;
-import br.newtowpaiva.modelo.execoes.CursoInvalidoNomeNuloException;
-import br.newtowpaiva.modelo.execoes.CursoInvalidoNomeTamanhoException;
+import br.newtonpaiva.modelo.Curso;
+import br.newtonpaiva.modelo.excecoes.CursoInvalidoException;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -22,10 +19,12 @@ import javax.swing.JOptionPane;
  */
 public class TelaCurso extends javax.swing.JDialog {
 
+    private final ResourceBundle bundle = ResourceBundle.getBundle("MessageBundle");
     private Curso cursoEdicao;
 
     /**
      * Creates new form TelaCurso
+     *
      * @param parent
      * @param modal
      */
@@ -70,7 +69,7 @@ public class TelaCurso extends javax.swing.JDialog {
             }
         });
 
-        btnCancelar.setText("Cancelar");
+        btnCancelar.setText("Limpar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelar(evt);
@@ -79,8 +78,6 @@ public class TelaCurso extends javax.swing.JDialog {
 
         lblNome.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         lblNome.setText("Nome");
-
-        imgLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -150,31 +147,22 @@ public class TelaCurso extends javax.swing.JDialog {
             cursoEdicao.salvar();
             //Mensagem de acordo com a açãso (Edição ou inserção)
             if (Inserir.equals("S")) {
-                JOptionPane.showMessageDialog(null, CURSO_OK_INSERIR);
+                JOptionPane.showMessageDialog(null, bundle.getString("curso.ok.inserir"));
                 /*
                 * Limpa os componentes 
                  */
                 Limpar();
                 cursoEdicao = null;
             } else {
-                JOptionPane.showMessageDialog(null, CURSO_OK_ALTERAR);
+                JOptionPane.showMessageDialog(null, bundle.getString("curso.ok.alterar"));
             }
             //Exceções
-        } catch (CursoInvalidoNomeNuloException ex) {
+        } catch (CursoInvalidoException ex) {
             Logger.getLogger(TelaCurso.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, CURSO_PREENCHIDO);
-        } catch (CursoInvalidoNomeTamanhoException ex) {
-            Logger.getLogger(TelaCurso.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, CURSO_NOME_MAXIMO);
-        } catch (CursoInvalidoIdNomeException ex) {//Somente para alteração
-            Logger.getLogger(TelaCurso.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, CURSO_EXISTENTE);
-        } catch (CursoInvalidoNomeException ex) {//Somente na inse~ção de dados
-            JOptionPane.showMessageDialog(null, CURSO_EXISTENTE);
-            Logger.getLogger(TelaCurso.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
             Logger.getLogger(TelaCurso.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         } finally {
             edtNome.requestFocus();
         }
@@ -200,7 +188,7 @@ public class TelaCurso extends javax.swing.JDialog {
             java.util.logging.Logger.getLogger(TelaCurso.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the dialog */

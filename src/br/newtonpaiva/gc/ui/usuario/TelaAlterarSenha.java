@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.newtonpaiva.gc.ui.aluno;
+package br.newtonpaiva.gc.ui.usuario;
 
 import br.newtonpaiva.gc.ui.utils.MensagemUtil;
 import br.newtonpaiva.modelo.Usuario;
@@ -67,8 +67,6 @@ public class TelaAlterarSenha extends javax.swing.JDialog {
         setTitle("Alterar a senha");
         setResizable(false);
 
-        imgLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
-
         lblConfSenha.setText("Confirmar senha");
 
         lblSenha.setText("Senha");
@@ -105,7 +103,7 @@ public class TelaAlterarSenha extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(99, 99, 99)
                 .addComponent(imgLogo)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(lblNomeUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(

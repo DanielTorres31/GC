@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.newtonpaiva.gc.ui;
+package br.newtonpaiva.gc.ui.curso;
 
-import static br.newtonpaiva.util.Mensagens.*;
-import br.newtowpaiva.modelo.Curso;
+import br.newtonpaiva.modelo.Curso;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -20,10 +20,12 @@ import javax.swing.table.DefaultTableModel;
  */
 public class TodosCursos extends javax.swing.JDialog {
 
+    private final ResourceBundle bundle = ResourceBundle.getBundle("MessageBundle");
     private Curso cursoSelecionado;
 
     /**
      * Creates new form TodosCursos
+     *
      * @param parent
      * @param modal
      */
@@ -97,8 +99,6 @@ public class TodosCursos extends javax.swing.JDialog {
                 btnAlterarActionPerformed(evt);
             }
         });
-
-        imgLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
 
         panBuscar.setBorder(javax.swing.BorderFactory.createTitledBorder("Pesquisar"));
 
@@ -187,7 +187,7 @@ public class TodosCursos extends javax.swing.JDialog {
         /*
         * Muda o título da tela de cursos
          */
-        Tela.setTitle(CURSO_INCLUIR);
+        Tela.setTitle(bundle.getString("curso.incluir"));
         /*
         * Tela de Contrato visivel
          */
@@ -197,7 +197,7 @@ public class TodosCursos extends javax.swing.JDialog {
          */
         atualizarTabela();
 
-        JOptionPane.showMessageDialog(null, GERAL_GRADE_ATUALIZADA);
+        JOptionPane.showMessageDialog(null, bundle.getString("geral.grade.atualizada"));
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
@@ -216,7 +216,7 @@ public class TodosCursos extends javax.swing.JDialog {
         * Sem linha selecionada
          */
         if (retorno == -1) {
-            JOptionPane.showMessageDialog(null, "Deve selecionar uma linha da grade !");
+            JOptionPane.showMessageDialog(null, bundle.getString("erro.grade"));
             return;
             /*
             * Linha selecionada
@@ -229,7 +229,7 @@ public class TodosCursos extends javax.swing.JDialog {
             /*
             * Muda o título da tela de cursos
              */
-            Tela.setTitle(CURSO_ALTERAR);
+            Tela.setTitle(bundle.getString("curso.alterar"));
 
             try {
                 /*
@@ -240,7 +240,7 @@ public class TodosCursos extends javax.swing.JDialog {
                 * Curso é nulo
                  */
                 if (cursoSelecionado == null) {
-                    JOptionPane.showMessageDialog(null, CURSO_NAO_EXISTE);
+                    JOptionPane.showMessageDialog(null, bundle.getString("curso.nao.existe"));
                     return;
                 } else {
                     /*
@@ -256,11 +256,11 @@ public class TodosCursos extends javax.swing.JDialog {
                      */
                     atualizarTabela();
 
-                    JOptionPane.showMessageDialog(null, GERAL_GRADE_ATUALIZADA);
+                    JOptionPane.showMessageDialog(null, bundle.getString("geral.grade.atualizada"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(TodosCursos.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+                JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
             }
 
         }
@@ -276,16 +276,16 @@ public class TodosCursos extends javax.swing.JDialog {
         * Linha selecionada >0
          */
         if (retorno == -1) {
-            JOptionPane.showMessageDialog(null, "Deve selecionar uma linha da grade !");
+            JOptionPane.showMessageDialog(null, bundle.getString("erro.grade"));
             return;
         } else {
-            String message = CURSO_PERGUNTA_EXCLUSAO;
+            String message = bundle.getString("curso.pergunta.exclusao");
             String title = "Confirmação";
             //Exibe caixa de dialogo (veja figura) solicitando confirmação ou não. 
             //Se o usuário clicar em "Sim" retorna 0 pra variavel reply, se informado não retorna 1
             int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
             if (reply != JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(null, CONTRATOS_NAO_EXCLUIDO);
+                JOptionPane.showMessageDialog(null, bundle.getString("curso.nao.excluido"));
                 return;
             }
             /*
@@ -299,36 +299,36 @@ public class TodosCursos extends javax.swing.JDialog {
                  */
                 cu = Curso.buscarPorId(retorno);
                 if (cu == null) {
-                    JOptionPane.showMessageDialog(null, CURSO_NAO_EXISTE);
+                    JOptionPane.showMessageDialog(null, bundle.getString("curso.nao.existe"));
                     return;
                 }
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+                JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
                 Logger.getLogger(TodosCursos.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             try {
-
-                if (Curso.buscarPorTotalAlunos(retorno).getTotalAluno() > 0) {
-                    JOptionPane.showMessageDialog(null, CURSO_ALUNO_EXISTENTE_EXCLUSAO);
+                cu.carregarAlunos();
+                if (cu.getTotalAluno() > 0) {
+                    JOptionPane.showMessageDialog(null, bundle.getString("curso.aluno.existente.exclusao"));
                     return;
                 }
 
             } catch (SQLException ex) {
                 Logger.getLogger(TodosCursos.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+                JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
             }
 
             try {
-
-                if (Curso.buscarPorTotalConvenios(retorno).getTotalConvenio() > 0) {
-                    JOptionPane.showMessageDialog(null, CURSO_CONVENIO_EXISTENTE_EXCLUSAO);
+                cu.carregarConvenios();
+                if (cu.getTotalConvenio() > 0) {
+                    JOptionPane.showMessageDialog(null, bundle.getString("curso.convenio.existente.exclusao"));
                     return;
                 }
 
             } catch (SQLException ex) {
                 Logger.getLogger(TodosCursos.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+                JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
             }
 
             try {
@@ -336,9 +336,9 @@ public class TodosCursos extends javax.swing.JDialog {
                 * Exclui o curso
                  */
                 cu.excluir(retorno);
-                JOptionPane.showMessageDialog(null, CURSO_EXCLUIDO);
+                JOptionPane.showMessageDialog(null, bundle.getString("curso.excluido"));
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+                JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
                 Logger.getLogger(TodosCursos.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -368,7 +368,7 @@ public class TodosCursos extends javax.swing.JDialog {
             java.util.logging.Logger.getLogger(TodosCursos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the dialog */
@@ -407,8 +407,8 @@ public class TodosCursos extends javax.swing.JDialog {
                     return false;
                 }
             };
-            tableModel.addColumn(GERAL_ID);
-            tableModel.addColumn(GERAL_NOME);
+            tableModel.addColumn(bundle.getString("geral.id"));
+            tableModel.addColumn(bundle.getString("geral.nome"));
             tableModel.setRowCount(0);
 
             String Nome;
@@ -419,7 +419,7 @@ public class TodosCursos extends javax.swing.JDialog {
                 Nome = edtNome.getText();
             }
 
-            List<Curso> lista = Curso.buscarTodos(Nome);
+            List<Curso> lista = Curso.buscarPorNome(Nome);
 
             lista.forEach(cursos -> {
                 Object[] row = {cursos.getId(), cursos.getCurso()};
@@ -430,7 +430,7 @@ public class TodosCursos extends javax.swing.JDialog {
 
         } catch (SQLException ex) {
             Logger.getLogger(TodosCursos.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+            JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
         }
 
     }

@@ -3,19 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.newtonpaiva.gc.ui;
+package br.newtonpaiva.gc.ui.convenio;
 
-import static br.newtonpaiva.util.Mensagens.*;
-import br.newtowpaiva.modelo.Convenio;
-import br.newtowpaiva.modelo.ConvenioSituacao;
-import br.newtowpaiva.modelo.Curso;
+import br.newtonpaiva.gc.ui.contrato.TelaContrato;
+import br.newtonpaiva.modelo.Convenio;
+import br.newtonpaiva.modelo.Curso;
+import br.newtonpaiva.modelo.SituacaoConvenio;
+import br.newtonpaiva.util.CpfCnpjUtil;
+import br.newtonpaiva.util.DateUtil;
+import br.newtonpaiva.util.StringUtil;
 import java.awt.Color;
+import java.awt.Component;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -23,6 +33,8 @@ import javax.swing.table.DefaultTableModel;
  * @author Guilherme
  */
 public class TodosConvenios extends javax.swing.JDialog {
+
+    private final ResourceBundle bundle = ResourceBundle.getBundle("MessageBundle");
 
     /**
      * Creates new form TodosConvenios
@@ -33,17 +45,11 @@ public class TodosConvenios extends javax.swing.JDialog {
     public TodosConvenios(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        /*
-        * posiciona a tela no centro da tela
-         */
+        //posiciona a tela no centro da tela
         setLocationRelativeTo(parent);
-        /*
-        * Atualiza a tabela
-         */
+        //Atualiza a tabela
         atualizarTabela();
-
-        SituacaoComponente();
-
+        //Cria as informações para aparacer em cursos
         CursosComponente();
     }
 
@@ -62,13 +68,17 @@ public class TodosConvenios extends javax.swing.JDialog {
         lblSituacaoConvenio = new javax.swing.JLabel();
         cbbCurso = new javax.swing.JComboBox<>();
         lblCurso = new javax.swing.JLabel();
-        lblInicioAtual = new javax.swing.JLabel();
-        edtAssinatura = new javax.swing.JFormattedTextField();
         lblDataEntrada = new javax.swing.JLabel();
-        edtVencimento = new javax.swing.JFormattedTextField();
-        jspCnpj = new javax.swing.JFormattedTextField();
+        edtVencimentoDe = new javax.swing.JFormattedTextField();
         lblCnpj = new javax.swing.JLabel();
         btnNovo = new javax.swing.JButton();
+        edtVencimentoAte = new javax.swing.JFormattedTextField();
+        lblDataEntradaAte = new javax.swing.JLabel();
+        edtAssinaturaAte = new javax.swing.JFormattedTextField();
+        lblDataAssinaturaAte = new javax.swing.JLabel();
+        edtAssinaturaDe = new javax.swing.JFormattedTextField();
+        lblDataAssinaturaAte1 = new javax.swing.JLabel();
+        jspCnpj = new javax.swing.JTextField();
         imgLogo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblConvenios = new javax.swing.JTable();
@@ -86,7 +96,7 @@ public class TodosConvenios extends javax.swing.JDialog {
             }
         });
 
-        cbbSituacaoConvenio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleciona um..." }));
+        cbbSituacaoConvenio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleciona um...", "Andamento", "Cancelado", "Finalizado" }));
 
         lblSituacaoConvenio.setText("Situação do convênio");
 
@@ -94,34 +104,10 @@ public class TodosConvenios extends javax.swing.JDialog {
 
         lblCurso.setText("Curso");
 
-        lblInicioAtual.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        lblInicioAtual.setText("Data de assinatura");
-
-        try {
-            edtAssinatura.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-
         lblDataEntrada.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        lblDataEntrada.setText("Data de vencimento");
+        lblDataEntrada.setText("Data de vencimento de");
 
-        try {
-            edtVencimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            jspCnpj.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##.###.###/####-##")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        jspCnpj.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jspCnpjFocusLot(evt);
-            }
-        });
+        edtVencimentoDe.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
 
         lblCnpj.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         lblCnpj.setText("CNPJ");
@@ -130,6 +116,27 @@ public class TodosConvenios extends javax.swing.JDialog {
         btnNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNovoActionPerformed(evt);
+            }
+        });
+
+        edtVencimentoAte.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+
+        lblDataEntradaAte.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        lblDataEntradaAte.setText("Data de vencimento até");
+
+        edtAssinaturaAte.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+
+        lblDataAssinaturaAte.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        lblDataAssinaturaAte.setText("Data de assinatura até");
+
+        edtAssinaturaDe.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+
+        lblDataAssinaturaAte1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        lblDataAssinaturaAte1.setText("Data de assinatura de");
+
+        jspCnpj.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                formatarCNPJ(evt);
             }
         });
 
@@ -154,16 +161,26 @@ public class TodosConvenios extends javax.swing.JDialog {
                         .addComponent(btnBuscar))
                     .addGroup(panBuscarLayout.createSequentialGroup()
                         .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblInicioAtual)
-                            .addComponent(edtAssinatura, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(193, 193, 193)
+                            .addComponent(lblDataAssinaturaAte1)
+                            .addComponent(edtAssinaturaDe, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblDataAssinaturaAte)
+                            .addComponent(edtAssinaturaAte, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(31, 31, 31)
                         .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblDataEntrada)
-                            .addComponent(edtVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(edtVencimentoDe, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblCnpj)
-                            .addComponent(jspCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(lblDataEntradaAte)
+                            .addComponent(edtVencimentoAte, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(panBuscarLayout.createSequentialGroup()
+                                .addComponent(lblCnpj)
+                                .addGap(97, 97, 97))
+                            .addComponent(jspCnpj))))
                 .addContainerGap())
         );
         panBuscarLayout.setVerticalGroup(
@@ -180,19 +197,26 @@ public class TodosConvenios extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbbCurso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(11, 11, 11)
-                .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panBuscarLayout.createSequentialGroup()
-                        .addComponent(lblInicioAtual)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(edtAssinatura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panBuscarLayout.createSequentialGroup()
                         .addComponent(lblDataEntrada)
                         .addGap(8, 8, 8)
-                        .addComponent(edtVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panBuscarLayout.createSequentialGroup()
-                        .addComponent(lblCnpj)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jspCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(edtVencimentoDe, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblCnpj)
+                    .addGroup(panBuscarLayout.createSequentialGroup()
+                        .addComponent(lblDataAssinaturaAte)
+                        .addGap(8, 8, 8)
+                        .addComponent(edtAssinaturaAte, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panBuscarLayout.createSequentialGroup()
+                        .addComponent(lblDataAssinaturaAte1)
+                        .addGap(8, 8, 8)
+                        .addComponent(edtAssinaturaDe, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panBuscarLayout.createSequentialGroup()
+                        .addComponent(lblDataEntradaAte)
+                        .addGap(8, 8, 8)
+                        .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(edtVencimentoAte, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jspCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panBuscarLayout.createSequentialGroup()
@@ -202,8 +226,6 @@ public class TodosConvenios extends javax.swing.JDialog {
                         .addComponent(btnBuscar)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
-
-        imgLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
 
         tblConvenios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -243,30 +265,31 @@ public class TodosConvenios extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        /*
-        * Atualiza a tabela
-         */
+        //Atualiza a tabela
         atualizarTabela();
     }//GEN-LAST:event_btnBuscarActionPerformed
 
-    private void jspCnpjFocusLot(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jspCnpjFocusLot
-        //Busca por empresa
-    }//GEN-LAST:event_jspCnpjFocusLot
-
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
-        /*
-        * Chama a tela de Contrato com o modal
-         */
+        //Chama a tela de Contrato com o modal
         TelaConvenios Tela = new TelaConvenios(null, true);
-        /*
-        * Tela de Contrato visivel
-         */
+        //Tela de Contrato visivel
         Tela.setVisible(true);
-
+        //Atualiza a tabela
         atualizarTabela();
-
-        JOptionPane.showMessageDialog(null, GERAL_GRADE_ATUALIZADA);
+        //Mostra a mensagem de grade atualizada
+        JOptionPane.showMessageDialog(null, bundle.getString("geral.grade.atualizada"));
     }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void formatarCNPJ(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formatarCNPJ
+        // TODO add your handling code here:
+        
+        String cnpj = CpfCnpjUtil.formatarCpfCnpj(jspCnpj.getText());
+
+        if(StringUtil.isNullOrWhiteSpace(cnpj))
+            jspCnpj.setText("");
+        else
+            jspCnpj.setText(cnpj);
+    }//GEN-LAST:event_formatarCNPJ
 
     /**
      * @param args the command line arguments
@@ -292,17 +315,15 @@ public class TodosConvenios extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                TodosConvenios dialog = new TodosConvenios(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            TodosConvenios dialog = new TodosConvenios(new javax.swing.JFrame(), true);
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+            dialog.setVisible(true);
         });
     }
 
@@ -311,15 +332,19 @@ public class TodosConvenios extends javax.swing.JDialog {
     private javax.swing.JButton btnNovo;
     private javax.swing.JComboBox<String> cbbCurso;
     private javax.swing.JComboBox<String> cbbSituacaoConvenio;
-    private javax.swing.JFormattedTextField edtAssinatura;
-    private javax.swing.JFormattedTextField edtVencimento;
+    private javax.swing.JFormattedTextField edtAssinaturaAte;
+    private javax.swing.JFormattedTextField edtAssinaturaDe;
+    private javax.swing.JFormattedTextField edtVencimentoAte;
+    private javax.swing.JFormattedTextField edtVencimentoDe;
     private javax.swing.JLabel imgLogo;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JFormattedTextField jspCnpj;
+    private javax.swing.JTextField jspCnpj;
     private javax.swing.JLabel lblCnpj;
     private javax.swing.JLabel lblCurso;
+    private javax.swing.JLabel lblDataAssinaturaAte;
+    private javax.swing.JLabel lblDataAssinaturaAte1;
     private javax.swing.JLabel lblDataEntrada;
-    private javax.swing.JLabel lblInicioAtual;
+    private javax.swing.JLabel lblDataEntradaAte;
     private javax.swing.JLabel lblSituacaoConvenio;
     private javax.swing.JPanel panBuscar;
     private javax.swing.JTable tblConvenios;
@@ -329,50 +354,37 @@ public class TodosConvenios extends javax.swing.JDialog {
 
         try {
 
+            UrgenciaConvenioTableCellRenderer render = new UrgenciaConvenioTableCellRenderer();
+
             DefaultTableModel tableModel = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
                 }
             };
-            tableModel.addColumn(GERAL_ID);
-            tableModel.addColumn("Empresa");
-            tableModel.addColumn("Curso");
-            tableModel.addColumn("Situação do covênio");
-            tableModel.addColumn("Data de vencimento");
-            tableModel.addColumn("Data de assinatura");
+            tableModel.addColumn(bundle.getString("geral.id"));
+            tableModel.addColumn(bundle.getString("contratos.grade.empresa"));
+            tableModel.addColumn(bundle.getString("geral.curso"));
+            tableModel.addColumn(bundle.getString("convenio.geral.situacao"));
+            tableModel.addColumn(bundle.getString("convenio.geral.data.assinatura"));
+            tableModel.addColumn(bundle.getString("convenio.geral.data.vencimento"));
             tableModel.setRowCount(0);
 
-            String dataAssinatura;
+            Calendar dataAssinaturaDe =  DateUtil.converter(edtAssinaturaDe.getText());
+            Calendar dataAssinaturaAte = DateUtil.converter(edtAssinaturaAte.getText());
+            Calendar dataVencimentoDe = DateUtil.converter(edtVencimentoDe.getText());
+            Calendar dataVencimentoAte = DateUtil.converter(edtVencimentoAte.getText());
 
-            if (edtAssinatura.getText().equals("  /  /    ")) {
-                dataAssinatura = "";
-            } else {
-                dataAssinatura = edtAssinatura.getText();
-            }
+            String cnpj = null;
 
-            String dataVencimento;
-
-            if (edtVencimento.getText().equals("  /  /    ")) {
-                dataVencimento = "";
-            } else {
-                dataVencimento = edtVencimento.getText();
-            }
-
-            String cnpj;
-
-            if (jspCnpj.getText().equals("  .   .   /    -  ")) {
-                cnpj = "";
-            } else {
+            if (!StringUtil.isNullOrWhiteSpace(jspCnpj.getText())) {
                 cnpj = jspCnpj.getText();
             }
 
-            String situacaoConvenio;
+            SituacaoConvenio situacao = null;
 
-            if (cbbSituacaoConvenio.getSelectedIndex() == 0) {
-                situacaoConvenio = "";
-            } else {
-                situacaoConvenio = cbbSituacaoConvenio.getSelectedItem().toString();
+            if (cbbSituacaoConvenio.getSelectedIndex() > 0) {
+                situacao = SituacaoConvenio.values()[cbbSituacaoConvenio.getSelectedIndex() - 1];
             }
 
             String curso;
@@ -383,22 +395,31 @@ public class TodosConvenios extends javax.swing.JDialog {
                 curso = cbbCurso.getSelectedItem().toString();
             }
 
-            List<Convenio> lista = Convenio.buscarTodos(dataAssinatura, dataVencimento, cnpj, situacaoConvenio, curso);
+            List<Convenio> lista = Convenio.buscarTodos(dataAssinaturaDe, 
+                    dataAssinaturaAte, dataVencimentoDe, dataVencimentoAte, cnpj, situacao, curso);
 
-            lista.forEach(convenios -> {
-                //Denomiar tempo para colorir as linhas
-                if (convenios.getId() == 18) {
-                    tblConvenios.setBackground(Color.CYAN);
+            for (int i = 0; i < lista.size(); i++) {
+                Convenio convenio = lista.get(i);
+                //Define as cores das linhas
+                if (DateUtil.getDifferenceDays(Calendar.getInstance(), convenio.getDataVencimento()) <= 15) {
+                    render.critico.add(i);
+                } else if (DateUtil.getDifferenceDays(Calendar.getInstance(), convenio.getDataVencimento()) <= 90) {
+                    render.alto.add(i);
+                } else if (DateUtil.getDifferenceDays(Calendar.getInstance(), convenio.getDataVencimento()) <= 120) {
+                    render.medio.add(i);
                 }
-                SimpleDateFormat f = new SimpleDateFormat(GERAL_FORMATO_DATA);
-                Object[] row = {convenios.getId(), convenios.getEmpresa().getNome(),
-                    convenios.getCurso().getCurso(), convenios.getConvenioSituacao().getNome(),
-                    f.format(convenios.getDataVencimento().getTime()),
-                    f.format(convenios.getDataAssinatura().getTime())
+                //Define as informações da tabela
+                SimpleDateFormat f = new SimpleDateFormat(bundle.getString("geral.formato.data"));
+                Object[] row = {convenio.getId(), convenio.getEmpresa().getNome(),
+                    convenio.getCurso().getCurso(), convenio.getSituacao(),
+                    f.format(convenio.getDataAssinatura().getTime()),
+                    f.format(convenio.getDataVencimento().getTime())
                 };
                 tableModel.addRow(row);
-            });
+            }
+            tblConvenios.setDefaultRenderer(Object.class, render);
             tblConvenios.setModel(tableModel);
+
         } catch (SQLException ex) {
             Logger.getLogger(TodosConvenios.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -406,10 +427,10 @@ public class TodosConvenios extends javax.swing.JDialog {
 
     private void CursosComponente() {
         try {
-            List<Curso> lista = Curso.buscarTodos("");
+            List<Curso> lista = Curso.buscarTodos();
             // Limpa o componente
             cbbCurso.removeAllItems();
-            cbbCurso.addItem(GERAL_SELECIONE_UM);
+            cbbCurso.addItem(bundle.getString("geral.seleciona.um"));
             lista.forEach(emp -> {
                 cbbCurso.addItem(emp.getCurso());
             });
@@ -417,24 +438,31 @@ public class TodosConvenios extends javax.swing.JDialog {
         } catch (SQLException ex) {
             Logger.getLogger(TelaContrato.class
                     .getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+            JOptionPane.showMessageDialog(null, bundle.getString("erro.conexao.banco"));
         }
     }
 
-    private void SituacaoComponente() {
-        try {
-            List<ConvenioSituacao> lista = ConvenioSituacao.buscarTodos();
-            // Limpa o componente
-            cbbSituacaoConvenio.removeAllItems();
-            cbbSituacaoConvenio.addItem(GERAL_SELECIONE_UM);
-            lista.forEach(ConvenioSituacao -> {
-                cbbSituacaoConvenio.addItem(ConvenioSituacao.getNome());
-            });
+    private class UrgenciaConvenioTableCellRenderer extends DefaultTableCellRenderer {
 
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaContrato.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, ERRO_CONEXAO_BANCO);
+        public List<Integer> critico = new ArrayList<>();
+        public List<Integer> alto = new ArrayList<>();
+        public List<Integer> medio = new ArrayList<>();
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+            final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+            if (critico.contains(row)) {
+                c.setBackground(Color.RED);
+            } else if (alto.contains(row)) {
+                c.setBackground(Color.CYAN);
+            } else if (medio.contains(row)) {
+                c.setBackground(Color.YELLOW);
+            } else {
+                c.setBackground(Color.WHITE);
+            }
+
+            return c;
         }
     }
 }

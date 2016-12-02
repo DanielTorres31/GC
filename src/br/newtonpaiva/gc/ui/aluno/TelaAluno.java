@@ -257,7 +257,6 @@ public class TelaAluno extends javax.swing.JDialog {
         //Inicia uma nova classe de curso
         Curso c = new Curso();
         try {
-
             if (cbbCurso.getSelectedIndex() > 0) {
 
                 List<Curso> lista = Curso.buscarPorNome((String) cbbCurso.getSelectedItem());
@@ -268,6 +267,8 @@ public class TelaAluno extends javax.swing.JDialog {
                 lista.forEach(Cursos -> {
                     c.setId(Cursos.getId());
                 });
+            } else {
+                MensagemUtil.exibirDialogo("curso.nao.existe");
             }
         } catch (SQLException ex) {
             Logger.getLogger(TelaAluno.class.getName()).log(Level.SEVERE, null, ex);

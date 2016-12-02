@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.util.ResourceBundle;
+import javax.swing.JFrame;
 
 /**
  *
@@ -24,17 +25,6 @@ import java.util.ResourceBundle;
 public class TodosAlunos extends javax.swing.JDialog {
 
     private Aluno alunoSelecionado;
-    private String ALUNO_NAO_EXCLUIDO; //= "Aluno não foi excluido";
-    private String ALUNO_NAO_EXISTE;  //= "Aluno não existe";;
-    private String ALUNO_CONTRATO_EXISTENTE_EXCLUSAO; //= "Aluno não foi excluido pois possúi contrato";;
-    private String ALUNO_EXCLUIDO; //= "Aluno excluido com sucesso";;
-    private String GERAL_ID;
-    private String GERAL_CURSO;
-    private String GERAL_RA;
-    private String GERAL_NOME;
-    private String GERAL_CPF;
-    private String GERAL_EMAIL;
-    private String GERAL_DEFICIENTE;
     private String GERAL_S;
     private String GERAL_N;
     private String GERAL_NAO;
@@ -90,6 +80,7 @@ public class TodosAlunos extends javax.swing.JDialog {
         cbbCurso = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         btnBuscar = new javax.swing.JButton();
+        btnLimpar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Todos Alunos");
@@ -99,13 +90,13 @@ public class TodosAlunos extends javax.swing.JDialog {
 
         tabAlunos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {},
-                {},
-                {},
-                {}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-
+                "Código do Aluno", "Nome do Curso", "RA", "Nome do Aluno", "CPF", "Email"
             }
         ));
         jScrollPane2.setViewportView(tabAlunos);
@@ -175,7 +166,7 @@ public class TodosAlunos extends javax.swing.JDialog {
                     .addGroup(panBuscarLayout.createSequentialGroup()
                         .addComponent(lblCpf)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(edtCpf, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE))
+                    .addComponent(edtCpf, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbbDeficiente, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -208,6 +199,13 @@ public class TodosAlunos extends javax.swing.JDialog {
             }
         });
 
+        btnLimpar.setText("Limpar");
+        btnLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -222,11 +220,13 @@ public class TodosAlunos extends javax.swing.JDialog {
                     .addComponent(panBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnNovo)
-                        .addGap(228, 228, 228)
+                        .addGap(150, 150, 150)
                         .addComponent(btnBuscar)
-                        .addGap(231, 231, 231)
+                        .addGap(154, 154, 154)
                         .addComponent(btnAlterar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnLimpar)
+                        .addGap(181, 181, 181)
                         .addComponent(btnExcluir))
                     .addComponent(jScrollPane2))
                 .addContainerGap())
@@ -242,7 +242,8 @@ public class TodosAlunos extends javax.swing.JDialog {
                     .addComponent(btnNovo)
                     .addComponent(btnExcluir)
                     .addComponent(btnAlterar)
-                    .addComponent(btnBuscar))
+                    .addComponent(btnBuscar)
+                    .addComponent(btnLimpar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -293,7 +294,7 @@ public class TodosAlunos extends javax.swing.JDialog {
 
                 atualizarTabela();
 
-                JOptionPane.showMessageDialog(null, "");
+                JOptionPane.showMessageDialog(null, "Lista atualizada");
 
             } catch (SQLException ex) {
                 Logger.getLogger(TodosAlunos.class.getName()).log(Level.SEVERE, null, ex);
@@ -352,11 +353,28 @@ public class TodosAlunos extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
+    private void Limpar() {
+        //Limpa os campos
+        edtNome.setText("");
+        cbbCurso.setSelectedIndex(0);
+        edtRa.setText("");
+        edtCpf.setText("");
+        cbbDeficiente.setSelectedIndex(0);
+    }
+    
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        //TodosAlunos tela = new TodosAlunos (
+           //(JFrame) this.getParent(), true);
+        
         //Atualiza a grade
         
         atualizarTabela();
     }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+        // TODO add your handling code here:
+        Limpar();
+    }//GEN-LAST:event_btnLimparActionPerformed
 
     /**
      * @param args the command line arguments
@@ -398,6 +416,7 @@ public class TodosAlunos extends javax.swing.JDialog {
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnExcluir;
+    private javax.swing.JButton btnLimpar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JComboBox<String> cbbCurso;
     private javax.swing.JComboBox<String> cbbDeficiente;
@@ -416,22 +435,20 @@ public class TodosAlunos extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private void atualizarTabela() {
-
         try {
-
             DefaultTableModel tableModel = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
                 }
             };
-            tableModel.addColumn(GERAL_ID);
-            tableModel.addColumn(GERAL_CURSO);
-            tableModel.addColumn(GERAL_RA);
-            tableModel.addColumn(GERAL_NOME);
-            tableModel.addColumn(GERAL_CPF);
-            tableModel.addColumn(GERAL_EMAIL);
-            tableModel.addColumn(GERAL_DEFICIENTE);
+            tableModel.addColumn("Código Aluno");
+            tableModel.addColumn("Nome do Curso");
+            tableModel.addColumn("RA");
+            tableModel.addColumn("Nome do Aluno");
+            tableModel.addColumn("CPF");
+            tableModel.addColumn("Email");
+            //tableModel.addColumn("Deficiente");
             tableModel.setRowCount(0);
 
             String Nome;
@@ -473,7 +490,7 @@ public class TodosAlunos extends javax.swing.JDialog {
             
             // TODO Tarley enviar e-mail para o Tarley solicitando a implementação deste método
             //List<Aluno> lista = Aluno.buscarTodos(Nome, Cursos, Ra, CPF, Deficiente);
-            List<Aluno> lista = Aluno.buscarTodos();
+            List<Aluno> lista = Aluno.buscarTodos(Nome, Cursos, Ra, CPF, Deficiente);
 
             lista.forEach(Alunos -> {
 
@@ -495,7 +512,6 @@ public class TodosAlunos extends javax.swing.JDialog {
             Logger.getLogger(TodosAlunos.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
-
     }
 
     private int LinhaSelecionadas() {

@@ -39,6 +39,7 @@ public class TelaUsuario extends javax.swing.JDialog {
         * ao usuário clicar enter ele aciona o botão Salvar
          */
         getRootPane().setDefaultButton(btnSalvar);
+        
     }
 
     /**
@@ -223,7 +224,7 @@ public class TelaUsuario extends javax.swing.JDialog {
         usuarioEdicao.setNome(edtNome.getText());
         usuarioEdicao.setSenha(String.valueOf(edtSenha.getPassword()));
         usuarioEdicao.setSenhaConfirmacao(String.valueOf(edtConfSenha.getPassword()));
-       
+        this.setVisible(false);
         try {
             //Salvar
             String senha = String.valueOf(edtSenha.getPassword());
@@ -268,7 +269,8 @@ public class TelaUsuario extends javax.swing.JDialog {
         lblSenha.setVisible(false);
         lblConfSenha.setVisible(false);
         //Desabilita o botão limpar
-        btnLimpar.setEnabled(false);
+        //btnLimpar.setEnabled(false);
+        
     }
 
     /**

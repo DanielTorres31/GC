@@ -295,14 +295,16 @@ public class TodosUsuarios extends javax.swing.JDialog {
             } else {
 
                 Tela.exibirDados(usuarioSelecionado);
-
+                
                 Tela.setVisible(true);
+                
                 /*
                 * Atualiza a tabela
                  */
                 atualizarTabela();
 
                 JOptionPane.showMessageDialog(null, bundle.getString("usuario.grade.atualizada"));
+                
             }
         } catch (SQLException ex) {
             Logger.getLogger(TodosUsuarios.class.getName()).log(Level.SEVERE, null, ex);
@@ -324,8 +326,11 @@ public class TodosUsuarios extends javax.swing.JDialog {
         * Atualiza a tabela
          */
         atualizarTabela();
+        
 
         JOptionPane.showMessageDialog(null, bundle.getString("usuario.grade.atualizada"));
+        
+        
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnAlterarSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarSenhaActionPerformed
@@ -351,6 +356,7 @@ public class TodosUsuarios extends javax.swing.JDialog {
                 Tela.exibirDados(usuarioSelecionado);
 
                 Tela.setVisible(true);
+                
             }
 
         } catch (SQLException ex) {

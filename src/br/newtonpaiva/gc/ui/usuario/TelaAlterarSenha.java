@@ -83,7 +83,6 @@ public class TelaAlterarSenha extends javax.swing.JDialog {
                 btnSalvarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnSalvar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -94,37 +93,51 @@ public class TelaAlterarSenha extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(99, 99, 99)
-                        .addComponent(imgLogo))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSenha)
-                            .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblConfSenha)
-                            .addComponent(edtConfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSenha1)
-                            .addComponent(edtSenhaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(99, 99, 99)
+                                .addComponent(imgLogo))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblSenha1)
+                                    .addComponent(edtSenhaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblSenha)
+                                            .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblConfSenha)
+                                            .addComponent(edtConfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnSalvar)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(imgLogo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblNomeUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblNomeUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblSenha1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(edtSenhaAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblSenha)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblConfSenha)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(edtConfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblSenha)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblConfSenha)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edtConfSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addComponent(btnSalvar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -145,33 +158,62 @@ public class TelaAlterarSenha extends javax.swing.JDialog {
         usuarioEdicao.setSenhaAtual(SenhaAtual);
         try {
             //Salva a senha
+            if(Senha.equals(ConfSenha)){
+                
             usuarioEdicao.salvarSenha();
             //Mensagem de alerta
             MensagemUtil.exibirDialogo("usuario.alteracao.confirmacao.senha");
-            //Fecha a tela
+            //Fecha a teladiferentes
             this.setVisible(false);
+            }else{
+                MensagemUtil.exibirDialogo("usuario.confirmacao.senha.diferentes");
+                edtConfSenha.setText("");
+                edtSenha.setText("");
+                edtSenhaAtual.setText("");
+                edtSenhaAtual.requestFocus();
+              }
+            
+            
         } catch (UsuarioSenhaAtualNuloInvalidoException ex) {
-            edtSenhaAtual.requestFocus();
+                edtConfSenha.setText("");
+                edtSenha.setText("");
+                edtSenhaAtual.setText("");
+                edtSenhaAtual.requestFocus();
             Logger.getLogger(TelaAlterarSenha.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (UsuarioSenhaAtualInvalidoException ex) {
-            edtSenhaAtual.requestFocus();
-            Logger.getLogger(TelaAlterarSenha.class.getName()).log(Level.SEVERE, null, ex);
+                edtSenhaAtual.requestFocus();
+                edtConfSenha.setText("");
+                edtSenha.setText("");
+                edtSenhaAtual.setText("");
+                Logger.getLogger(TelaAlterarSenha.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (UsuarioInvalidoSenhaNuloException ex) {
-            edtSenha.requestFocus();
+                edtConfSenha.setText("");
+                edtSenha.setText("");
+                edtSenhaAtual.setText("");
+                edtSenhaAtual.requestFocus();
             Logger.getLogger(TelaAlterarSenha.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (UsuarioInvalidoConfirmacaoSenhaNuloException ex) {
-            edtSenhaAtual.requestFocus();
+                edtConfSenha.setText("");
+                edtSenha.setText("");
+                edtSenhaAtual.setText("");
+                edtSenhaAtual.requestFocus();
             Logger.getLogger(TelaAlterarSenha.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (UsuarioTamanhoSenhaInvalidoException ex) {
-            edtSenha.requestFocus();
+                edtConfSenha.setText("");
+                edtSenha.setText("");
+                edtSenhaAtual.setText("");
+                edtSenhaAtual.requestFocus();
             Logger.getLogger(TelaAlterarSenha.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (UsuarioInvalidoSenhaConfirmacaoSenhaNuloException ex) {
-            edtConfSenha.requestFocus();
+                edtConfSenha.setText("");
+                edtSenha.setText("");
+                edtSenhaAtual.setText("");
+                edtSenhaAtual.requestFocus();
             Logger.getLogger(TelaAlterarSenha.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (SQLException ex) {

@@ -56,7 +56,7 @@ public class TelaContrato extends javax.swing.JDialog {
     public TelaContrato(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        ImageIcon imagemTituloJanela = new ImageIcon("../GC/resources/LogoPequena.jpg");
+        ImageIcon imagemTituloJanela = new ImageIcon(getClass().getResource("/LogoPequena.jpg"));
         setIconImage(imagemTituloJanela.getImage());
         setLocationRelativeTo(parent);
         lblNomeAluno.setText("");

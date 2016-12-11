@@ -25,7 +25,7 @@ public class TelaPesquisa extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         inicializarTabela();
-        ImageIcon imagemTituloJanela = new ImageIcon("../GC/resources/LogoPequena.jpg");
+        ImageIcon imagemTituloJanela = new ImageIcon(getClass().getResource("/LogoPequena.jpg"));
         setIconImage(imagemTituloJanela.getImage());
         setLocationRelativeTo(parent);
         this.setResizable(false);

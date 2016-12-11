@@ -40,7 +40,7 @@ public class TelaEmpresa extends javax.swing.JDialog {
         super(aThis, b);
 
         initComponents();
-        ImageIcon imagemTituloJanela = new ImageIcon("../GC/resources/LogoPequena.jpg");
+        ImageIcon imagemTituloJanela = new ImageIcon(getClass().getResource("/LogoPequena.jpg"));
         setIconImage(imagemTituloJanela.getImage());
         setLocationRelativeTo(null);
         txtNomeEmpresa.setText("");

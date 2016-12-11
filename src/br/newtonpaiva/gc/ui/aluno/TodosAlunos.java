@@ -335,7 +335,7 @@ public class TodosAlunos extends javax.swing.JDialog {
                 
                 a.carregarContratos();
                 
-                if (!a.getContratos().isEmpty()) {
+                if (!a.getListaContratos().isEmpty()) {
                     JOptionPane.showMessageDialog(null, bundle.getString("aluno.contrato.existente.exclusao"));
                     return;
                 }

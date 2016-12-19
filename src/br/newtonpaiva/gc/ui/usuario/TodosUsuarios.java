@@ -301,10 +301,7 @@ public class TodosUsuarios extends javax.swing.JDialog {
                 /*
                 * Atualiza a tabela
                  */
-                atualizarTabela();
-
-                JOptionPane.showMessageDialog(null, bundle.getString("usuario.grade.atualizada"));
-                
+                atualizarTabela();                
             }
         } catch (SQLException ex) {
             Logger.getLogger(TodosUsuarios.class.getName()).log(Level.SEVERE, null, ex);
@@ -326,11 +323,6 @@ public class TodosUsuarios extends javax.swing.JDialog {
         * Atualiza a tabela
          */
         atualizarTabela();
-        
-
-        JOptionPane.showMessageDialog(null, bundle.getString("usuario.grade.atualizada"));
-        
-        
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnAlterarSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarSenhaActionPerformed

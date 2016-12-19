@@ -264,8 +264,6 @@ public class TodosAlunos extends javax.swing.JDialog {
         Tela.setVisible(true);
 
         atualizarTabela();
-
-        JOptionPane.showMessageDialog(null, "Lista atualizada");
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
@@ -293,9 +291,6 @@ public class TodosAlunos extends javax.swing.JDialog {
                 Tela.setVisible(true);
 
                 atualizarTabela();
-
-                JOptionPane.showMessageDialog(null, "Lista atualizada");
-
             } catch (SQLException ex) {
                 Logger.getLogger(TodosAlunos.class.getName()).log(Level.SEVERE, null, ex);
             }

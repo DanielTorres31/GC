@@ -196,8 +196,6 @@ public class TodosCursos extends javax.swing.JDialog {
         * Atualiza a tabela
          */
         atualizarTabela();
-
-        JOptionPane.showMessageDialog(null, bundle.getString("geral.grade.atualizada"));
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
@@ -255,8 +253,6 @@ public class TodosCursos extends javax.swing.JDialog {
                     * Atualiza a tabela
                      */
                     atualizarTabela();
-
-                    JOptionPane.showMessageDialog(null, bundle.getString("geral.grade.atualizada"));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(TodosCursos.class.getName()).log(Level.SEVERE, null, ex);

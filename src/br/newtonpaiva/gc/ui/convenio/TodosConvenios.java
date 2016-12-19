@@ -276,8 +276,6 @@ public class TodosConvenios extends javax.swing.JDialog {
         Tela.setVisible(true);
         //Atualiza a tabela
         atualizarTabela();
-        //Mostra a mensagem de grade atualizada
-        JOptionPane.showMessageDialog(null, bundle.getString("geral.grade.atualizada"));
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void formatarCNPJ(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formatarCNPJ

@@ -6,7 +6,11 @@
 package br.newtonpaiva.gc.ui.usuario;
 
 import br.newtonpaiva.modelo.Usuario;
+import br.newtonpaiva.modelo.excecoes.UsuarioInvalidoConfirmacaoSenhaNuloException;
 import br.newtonpaiva.modelo.excecoes.UsuarioInvalidoException;
+import br.newtonpaiva.modelo.excecoes.UsuarioInvalidoSenhaConfirmacaoSenhaNuloException;
+import br.newtonpaiva.modelo.excecoes.UsuarioInvalidoSenhaNuloException;
+import br.newtonpaiva.modelo.excecoes.UsuarioTamanhoSenhaInvalidoException;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -20,11 +24,12 @@ import javax.swing.JOptionPane;
 public class TelaUsuario extends javax.swing.JDialog {
 
     private Usuario usuarioEdicao;
-    private ResourceBundle bundle =
-            ResourceBundle.getBundle("MessageBundle");
+    private ResourceBundle bundle
+            = ResourceBundle.getBundle("MessageBundle");
 
     /**
      * Creates new form TelaUsuario
+     *
      * @param parent
      * @param modal
      */
@@ -39,7 +44,7 @@ public class TelaUsuario extends javax.swing.JDialog {
         * ao usuário clicar enter ele aciona o botão Salvar
          */
         getRootPane().setDefaultButton(btnSalvar);
-        
+
     }
 
     /**
@@ -217,44 +222,43 @@ public class TelaUsuario extends javax.swing.JDialog {
             //Inicia uma nova classe
             usuarioEdicao = new Usuario();
             Inserir = "S";
+            
+            usuarioEdicao.setSenha(String.valueOf(edtSenha.getPassword()));
+            usuarioEdicao.setSenhaConfirmacao(String.valueOf(edtConfSenha.getPassword()));        
+        } else {
+            usuarioEdicao.setSenhaConfirmacao(usuarioEdicao.getSenha());
         }
+        
         //Seta o nome do curso para salvar (Inserir ou editar)
         usuarioEdicao.setEmail(edtEmail.getText());
         usuarioEdicao.setLogin(edtLogin.getText());
         usuarioEdicao.setNome(edtNome.getText());
-        usuarioEdicao.setSenha(String.valueOf(edtSenha.getPassword()));
-        usuarioEdicao.setSenhaConfirmacao(String.valueOf(edtConfSenha.getPassword()));
-        this.setVisible(false);
+        
         try {
-            //Salvar
-            String senha = String.valueOf(edtSenha.getPassword());
-            String senhaConf = String.valueOf(
-                            edtConfSenha.getPassword());
-            if(senha.equals(senhaConf)){
             usuarioEdicao.salvar();
 
             if (Inserir.equals("S")) {
                 JOptionPane.showMessageDialog(null, bundle.getString("usuario.incluir.ok"));
-                /*
-                * Limpa os componentes 
-                 */
                 limpar();
                 usuarioEdicao = null;
             } else {
                 JOptionPane.showMessageDialog(null, bundle.getString("usuario.alterar.ok"));
-                
             }
-            }else{
-                JOptionPane.showMessageDialog(null, "As senhas digitadas não são iguais.");
-                edtSenha.setText("");
-                edtConfSenha.setText("");
-                edtSenha.requestFocus();
-            }
-        } catch (UsuarioInvalidoException | SQLException ex) {
-            Logger.getLogger(TelaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+
+            this.setVisible(false);
+        } catch (UsuarioInvalidoException | UsuarioInvalidoSenhaNuloException | 
+                UsuarioInvalidoConfirmacaoSenhaNuloException | 
+                UsuarioInvalidoSenhaConfirmacaoSenhaNuloException |
+                UsuarioTamanhoSenhaInvalidoException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
+            
+            edtSenha.setText("");
+            edtConfSenha.setText("");
+            edtSenha.requestFocus();
+        } catch(SQLException ex) {
+            Logger.getLogger(TelaUsuario.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage());            
         }
-        
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     public void exibirDados(Usuario u) {
@@ -270,7 +274,6 @@ public class TelaUsuario extends javax.swing.JDialog {
         lblConfSenha.setVisible(false);
         //Desabilita o botão limpar
         //btnLimpar.setEnabled(false);
-        
     }
 
     /**
@@ -293,7 +296,7 @@ public class TelaUsuario extends javax.swing.JDialog {
             java.util.logging.Logger.getLogger(TelaUsuario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the dialog */

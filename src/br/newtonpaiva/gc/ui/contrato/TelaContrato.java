@@ -7,6 +7,7 @@ package br.newtonpaiva.gc.ui.contrato;
 
 import br.newtonpaiva.gc.ui.utils.TelaPesquisa;
 import br.newtonpaiva.modelo.*;
+import br.newtonpaiva.modelo.excecoes.AnexoInvalidoException;
 import br.newtonpaiva.modelo.excessoes.ContratoInvalidoException;
 import br.newtonpaiva.modelo.excessoes.TermoAditivoInvalidoException;
 import br.newtonpaiva.util.CpfCnpjUtil;
@@ -1240,6 +1241,8 @@ public class TelaContrato extends javax.swing.JDialog {
                     int id = contrato.anexarDocumento(arquivo.getAbsolutePath());
                     tableModel.addRow(
                             new String[]{String.valueOf(id), arquivo.getName()});
+                } catch(AnexoInvalidoException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(this, "Não foi possível encontrar o arquivo!");
@@ -2381,14 +2384,14 @@ public class TelaContrato extends javax.swing.JDialog {
                     int id = termo.anexar(arquivo.getAbsolutePath());
                     tableModelAnexoTermo.addRow(
                             new String[]{String.valueOf(id), arquivo.getName()});
+                } catch (AnexoInvalidoException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(this, "Não foi possível encontrar o arquivo!");
-                } catch (SQLException ex) {
+                } catch (IOException | SQLException ex) {
                     Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(this, "Erro ao inserir o arquivo no banco de dados!");
-                } catch (IOException ex) {
-                    Logger.getLogger(TelaContrato.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
